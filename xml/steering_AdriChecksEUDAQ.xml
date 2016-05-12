@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Steering File for DMAHCAL -->
+
+<DMAHCAL>
+
+    <Settings>
+    <!-- Test Mode -->
+    <parameter name="Test_Mode" value="false"/>
+    </Settings>
+
+    <!-- Mapping file -->
+    <Mapping>
+    <parameter name="Filename" value="MapChipChan2IJK_July2015.txt"/>
+    </Mapping>
+
+    <T0s>
+    <!-- Number of T0s/Cherenkov -->
+    <parameter name="NT0" value="9"/>
+    <!-- Number position I J K -->
+    <parameter name="T0_1" value="8 18 10" />
+    <parameter name="T0_2" value="2 24 11"/>
+    <parameter name="T0_3" value="15 24 11"/>
+    <parameter name="T0_4" value="2 24 12" />
+    <parameter name="T0_5" value="22 24 12" />
+    <parameter name="T0_6" value="2 24 13" />
+    <parameter name="T0_7" value="23 24 13" />
+    <parameter name="T0_8" value="3 24 14" />
+    <parameter name="T0_9" value="23 24 14" />
+    </T0s>
+
+    <Steering> 
+    <!-- Run Number -->
+
+    <parameter name="Run" value="24453"/>
+    <!-- Input File PATH -->
+    <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/CERN_SPS_July_2015/Muon"/-->
+    <parameter name="Input_PATH" value="/home/calice/Desktop/EUDAQ_PC/eudaq-1.4.5-TestBeamCern/data/CERN_SPS_July_2015/Electron/30GeV"/>
+    <!-- Output File PATH -->
+    <parameter name="Output_PATH" value="/home/calice/Desktop/Reco_Data"/>
+    <!-- Type of DB (file or server) -->
+    <parameter name="DB" value="DBHandler"/>
+    <!-- Pedestal substraction -->
+    <parameter name="Pedestal" value="true"/>
+    <!-- ADC to MIP Conversion -->
+    <parameter name="ADCtoMIP" value="true"/>
+    </Steering>
+
+    <Storage>
+    <parameter name="File" value="Archive_Monitor.root"/>
+    </Storage>
+
+    <Analysis>
+    <!-- if EBU present -->
+    <parameter name="With_EBU" value="true"/>
+    <!-- MIP Cut value -->
+    <parameter name="MIP_Cut" value="0,5"/>
+    <!-- Nlayer max last excluded -->
+    <parameter name="NLayer" value="15"/>
+    <!-- Cut on Min Number of Hits in Event -->
+    <parameter name="NMinHits" value="5"/>
+    <!-- Cut on Max Number of Hits in Event -->
+    <parameter name="NMaxHits" value="300"/>
+    <!-- new ITEP Layer in Physics Mode -->
+    <parameter name="PhysicsMode" value="true"/>
+    </Analysis>
+
+</DMAHCAL>

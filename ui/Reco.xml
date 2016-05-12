@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!-- Loading shared library : /afs/desy.de/user/h/huonglan/RunMarlin/myInstall/lib/libuserlib.so.6.5.1 (libuserlib.so)-->
+<!-- Loading shared library : /afs/desy.de/user/h/huonglan/RunMarlin/myInstall/lib/liblabview2lcio.so.1.0.0 (liblabview2lcio.so)-->
+
+<!--##########################################
+    #                                        #
+    #     Example steering file for marlin   #
+    #                                        #
+    ##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+    <processor name="MyLabviewConverter2"/>
+    <!--processor name="ProgressHandler"/-->
+    <processor name="GeoConditions"/>
+    <!--processor name="AmpConditions"/-->
+    <processor name="Ahc2MappingProcessor"/>
+    <processor name="Ahc2CellDescriptionProcessor"/>
+    <processor name="Ahc2CalibrationsProcessor"/>
+    <processor name="Ahc2CalibrateProcessorHCAL"/>
+    <processor name="HcalRootTreeWriter"/>
+    <processor name="MyLCIOOutputProcessor"/>
+  </execute>
+
+ <global>
+  <!-- limit the number of processed records (run+evt): -->
+  <parameter name="MaxRecordNumber" value="0" />
+  <parameter name="SkipNEvents" value="0" />
+  <parameter name="SupressCheck" value="false" />
+  <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> SILENT </parameter>
+ </global>
+
+ <processor name="MyLabviewConverter2" type="LabviewConverter2">
+ <!--Reads the ascii ahcal labview raw data files. Make sure to not specify any LCIOInputFiles in the steering in order to read the Calice native raw data files .-->
+  <!--Initial String to the ahcal data file. i.e. 'Run'-->
+  <parameter name="Data" type="string"> INPUT </parameter>
+  <!--Type name of the detector. Currently valid identifiers are: AHC2, AHC2M AEC-->
+  <parameter name="DetectorType" type="string">AHC2M </parameter>
+  <!--Runnumber-->
+  <parameter name="Runnumber" type="int"> RUNNUMBER </parameter>
+  <!--First part of Slow Control Block, HBU 120 lines, EPT 1920 lines,  AHC2M New Labview output 0 lines-->
+  <parameter name="SlowControlLineNumber" type="int">0 </parameter>
+  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+  <parameter name="Verbosity" type="string"> ERROR </parameter>
+</processor>
+
+<processor name="GeoConditions" type="ConditionsProcessor">
+    <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/>
+    <parameter name="DBCondHandler" type="StringVec">
+        Ahc2ModuleDescription        /test_lan/TestbeamApr2015/ModuleDescription               HEAD
+        Ahc2ModuleConnection         /test_lan/TestbeamApr2015/ModuleConnection                HEAD
+        Ahc2ModuleLocationReference  /test_lan/TestbeamApr2015/ModuleLocationReference         HEAD
+        E4DPedestal                  /test_lan/TestbeamApr2015/Pedestal        HEAD
+        E4DGainConstants             /test_lan/TestbeamApr2015/gain_constants             HEAD
+        E4DGainSlopes                /test_lan/TestbeamApr2015/gain_slopes                HEAD
+        Ahc2DetectorTransformation   /test_lan/TestbeamApr2015/DetectorTransformation      HEAD
+        E4DMipConstants              /test_lan/TestbeamApr2015/mip_constants                   HEAD
+        E4DMipSlopes                 /test_lan/TestbeamApr2015/mip_slopes                        HEAD
+
+
+    </parameter>
+ </processor>
+
+  <processor name="AmpConditions" type="ConditionsProcessor">
+    <parameter name="DBInit" type="string" value="flc53.desy.de:calice:caliceon:Delice.1:3306"/>
+    <parameter name="DBCondHandler" type="StringVec">
+       E4DInterConstants           /test_lu/E4D_ic_constants           HEAD
+       E4DResponseCurve            /test_lu/E4D_SiPMResponseCurve      HEAD
+    </parameter>
+  </processor>
+
+<processor name="Ahc2MappingProcessor" type="MappingProcessor">
+    <!--Processor that provides a CALICE Mapping object from conditions data-->
+    <!--Name of the ModuleConnection collection-->
+    <parameter name="ModuleConnection"  type="string" lcioInType="LCGenericObject"> Ahc2ModuleConnection </parameter>
+    <!--Name of the ModuleDescription collection-->
+    <parameter name="ModuleDescription" type="string" lcioInType="LCGenericObject"> Ahc2ModuleDescription </parameter>
+    <!--Type name of the mapper instance. Currently valid identifiers are: AHC,AHC2-->
+    <parameter name="MapperType" type="string" value="AHC2"/>
+  </processor>
+
+ <processor name="Ahc2CellDescriptionProcessor" type="CellDescriptionProcessor">
+    <!--Processor that provides a MappedContainer of CALICE CellDescription objects from conditions data-->
+
+    <!--name of MappingProcessor which takes care of the mapping-->
+    <parameter name="MappingProcessorName"   type="string"> Ahc2MappingProcessor </parameter>
+
+    <!--Name of the DetectorTransformation collection-->
+    <parameter name="DetectorTransformation" type="string" lcioInType="LCGenericObject"> Ahc2DetectorTransformation </parameter>
+    <!--Name of the ModuleConnection collection-->
+    <parameter name="ModuleConnection"       type="string" lcioInType="LCGenericObject"> Ahc2ModuleConnection </parameter>
+    <!--Name of the ModuleDescription collection-->
+    <parameter name="ModuleDescription"      type="string" lcioInType="LCGenericObject"> Ahc2ModuleDescription </parameter>
+    <!--Name of the ModuleLocation collection-->
+    <parameter name="ModuleLocation"         type="string" lcioInType="LCGenericObject"> Ahc2ModuleLocationReference </parameter>
+    <parameter name="Verbosity" type="string"> ERROR </parameter>
+  </processor>
+
+<processor name="Ahc2CalibrationsProcessor" type="Ahc2CalibrationsProcessor">
+ <!--Processor that provides a MappedContainer of SiPMCalibrations objects-->
+  <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
+  <parameter name="MappingProcessorName" type="string">Ahc2MappingProcessor </parameter>
+  <!--Name of the MIP constants collection-->
+  <!--parameter name="MIPConstantCollection" type="string" lcioInType="LCGenericObject">E4DMapper </parameter-->
+  <!--Name of the pedestal collection-->
+  <parameter name="PedestalCollection" type="string" lcioInType="LCGenericObject"> E4DPedestal </parameter>
+  <!--Name of the MIP constants collection-->
+  <parameter name="MIPConstantCollection" type="string" lcioInType="LCGenericObject"> E4DMipConstants </parameter>
+  <!--Name of the MIP slopes collection-->
+  <parameter name="MIPSlopeCollection" type="string" lcioInType="LCGenericObject"> E4DMipSlopes </parameter>
+  <!--Name of the gain constants collection-->
+  <parameter name="GainConstantCollection" type="string" lcioInType="LCGenericObject"> E4DGainConstants </parameter>
+  <!--Name of the gain slopes collection-->
+  <parameter name="GainSlopeCollection" type="string" lcioInType="LCGenericObject"> E4DGainSlopes </parameter>
+  <!--Name of the interCalibration collection-->
+  <!--parameter name="InterCalibrationCollection" type="string" lcioInType="LCGenericObject"> E4DInterConstants </parameter-->
+    <!--Name of the saturation collection-->
+  <!--parameter name="SaturationCollection" type="string" lcioInType="LCGenericObject"> E4DResponseCurve </parameter-->
+  <!--Default (global) value for the pixel scale factor-->
+  <!--parameter name="GlobalPixelScaleFactor" type="float" value="0.8"/-->
+  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+  <parameter name="Verbosity" type="string"> ERROR </parameter>
+</processor>
+
+ <processor name="Ahc2CalibrateProcessorHCAL" type="Ahc2CalibrateProcessor">
+ <!--Does calibration of AHCal hits-->
+  <!--Name of the CellDescriptionProcessor instance that provides the corrected position of the cells.-->
+  <parameter name="CellDescriptionProcessorName" type="string">Ahc2CellDescriptionProcessor </parameter>
+  <!--Name of the EPTCalibrationsProcessor that provides the calibrations of the AHCal tiles.-->
+  <parameter name="Ahc2CalibrationsProcessorName" type="string">Ahc2CalibrationsProcessor </parameter>
+  <!--Name of the input collection-->
+  <parameter name="InputCollectionName" type="string">LabviewDataHCAL </parameter>
+  <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
+  <parameter name="MappingProcessorName" type="string">Ahc2MappingProcessor </parameter>
+  <!--Minimal energy deposition in units of MIP to keep hit, applied only if ZeroSuppression==1.-->
+  <parameter name="MipCut" type="float"> 0.5 </parameter>
+  <!--AHCal conversion factor from MIP to GeV-->
+  <parameter name="MipToGeVFactor" type="float">0.0255 </parameter>
+  <!--Name of the output AHCal hit collection, of type CalorimeterHit-->
+  <parameter name="OutputAhcHitCollectionName" type="string"> Ahc2Calorimeter_Hits </parameter>
+  <!--apply (1) or ignore (0) the pedestal subtraction-->
+  <parameter name="PedestalSubtraction" type="bool"> false </parameter>
+  <!--scale factor for the energy-->
+  <!--parameter name="ScaleEnergy" type="float">1 </parameter-->
+  <!--apply (1) or ignore (0) the MIP threshold cut-->
+  <parameter name="ZeroSuppression" type="bool"> false </parameter>
+  <!--Do error calculation-->
+  <parameter name="doErrorCalculation" type="bool">false </parameter>
+  <!--Do gain temperature correction-->
+  <parameter name="doGainTemperatureCorrection" type="bool">false </parameter>
+  <!--Do MIP temperature correction-->
+  <parameter name="doMipTemperatureCorrection" type="bool">false </parameter>
+  <!--Do saturation correction-->
+  <parameter name="doSaturationCorrection" type="bool">false </parameter>
+  <!--Write only the raw amplitude to the output collection (i.e. don't do any calibration, used for creation of noise files)-->
+  <parameter name="doWriteOnlyRawAmplitude" type="bool">false </parameter>
+  <!--Filter dead cells-->
+  <parameter name="filterDeadCells" type="bool">false </parameter>
+  <!--Filter cells that use some default value in calibration.-->
+  <parameter name="filterDefaultCells" type="bool">false </parameter>
+  <!--Convert RAW ADC to MIP cell by cell-->
+  <parameter name="doMipConversion" type="bool"> false </parameter>
+  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+  <parameter name="Verbosity" type="string"> ERROR </parameter>
+ </processor>
+
+<!-- Write root file containing Temp data -->
+ <processor name="HcalRootTreeWriter" type="RootTreeWriter">
+    <!--Name of the output ROOT file-->
+    <parameter name="OutFileName" type="string"> OUTPUT_ROOT </parameter>
+    <parameter name="HitWriteEngine_enable" type="int">1 </parameter>
+    <parameter name="HitWriteEngine_InCol" type="string" lcioInType="CalorimeterHit"> Ahc2Calorimeter_Hits </parameter>
+    <parameter name="HitWriteEngine_caloType" type="string">ahc </parameter>
+    <parameter name="HitWriteEngine_eventFiltering" type="int">1 </parameter>
+    <parameter name="HitWriteEngine_informationLevel" type="int">3 </parameter>
+    <parameter name="HitWriteEngine_cogIJenable" type="int">1 </parameter>
+  </processor>
+
+<processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
+ <!--Writes the current event to the specified LCIO outputfile. Needs to be the last ActiveProcessor.-->
+  <!--drops the named collections from the event-->
+  <parameter name="DropCollectionNames" type="StringVec"> LabviewDataHCAL LabviewDataECAL </parameter>
+  <!--drops all collections of the given type from the event-->
+  <!--parameter name="DropCollectionTypes" type="StringVec">SimTrackerHit SimCalorimeterHit  </parameter-->
+  <!-- write complete objects in subset collections to the file (i.e. ignore subset flag)-->
+  <parameter name="FullSubsetCollections" type="StringVec"> Ahc2Calorimeter_Hits ScEcalCalorimeter_Hits </parameter>
+  <!--force keep of the named collections - overrules DropCollectionTypes (and DropCollectionNames)-->
+  <!--parameter name="KeepCollectionNames" type="StringVec">MyPreciousSimTrackerHits  </parameter-->
+  <!-- name of output file -->
+   <parameter name="LCIOOutputFile" type="string"> OUTPUT_SLCIO </parameter>
+  <!--write mode for output file:  WRITE_APPEND or WRITE_NEW-->
+  <parameter name="LCIOWriteMode" type="string"> WRITE_NEW </parameter>
+  <!--will split output file if size in kB exceeds given value - doesn't work with APPEND and NEW-->
+  <!--parameter name="SplitFileSizekB" type="int">1992294 </parameter-->
+  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+  <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
+</processor>
+
+</marlin>
