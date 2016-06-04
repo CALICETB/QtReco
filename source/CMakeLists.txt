@@ -1,16 +1,16 @@
 
-file(GLOB_SRC
+file(GLOB GLOB_SRC
        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
        ${CMAKE_CURRENT_SOURCE_DIR}/src/tinyxml/*.cpp)
 
-file(GLOB_INC
+file(GLOB GLOB_INC
        ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
        ${CMAKE_CURRENT_SOURCE_DIR}/include/tinyxml/*.h)
        
-file(GLOB_UI
+file(GLOB GLOB_UI
         ${PROJECT_SOURCE_DIR}/ui/*.ui )
         
- file(GLOB_QRC
+ file(GLOB GLOB_QRC
         ${PROJECT_SOURCE_DIR}/ressource/*.qrc )
 
 # require proper c++
