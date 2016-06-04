@@ -41,7 +41,7 @@ void DMAHCALBooker::Book1DHistograms(std::string hname, int NBins, int lower_bou
 
 void DMAHCALBooker::Book1DHistograms(std::string hname, int NLayer, int NBins, int lower_bound, int upper_bound)
 {
-    TH1F *h1D[NLayer];
+    vector<TH1F*> h1D(NLayer);
     TString name;
 
     for(int i = 0; i < NLayer; i++)
