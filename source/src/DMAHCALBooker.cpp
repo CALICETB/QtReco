@@ -34,7 +34,7 @@ void DMAHCALBooker::Book1DHistograms(std::string hname, int NBins, int lower_bou
     h1D = new TH1F(name, "", NBins, lower_bound, upper_bound);
     m_list1D->Add(h1D);
 
-    m_objectList.insert(std::make_pair<std::string, TList*>("1D", m_list1D));
+    m_objectList.insert(std::make_pair("1D", m_list1D));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ void DMAHCALBooker::Book1DHistograms(std::string hname, int NLayer, int NBins, i
         m_list1D->Add(h1D[i]);
     }
 
-    m_objectList.insert(std::make_pair<std::string, TList*>("1D", m_list1D));
+    m_objectList.insert(std::make_pair("1D", m_list1D));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ void DMAHCALBooker::Book2DHistograms(std::string hname, int NBins, int lower_bou
 
     m_list2D->Add(h2D);
 
-    m_objectList.insert(std::make_pair<std::string, TList*>("2D", m_list2D));
+    m_objectList.insert(std::make_pair("2D", m_list2D));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void DMAHCALBooker::BookTGraph(int npoint, std::string tname)
     tgraph->SetTitle(graphname);
 
     m_listTGraph->Add(tgraph);
-    m_objectList.insert(std::make_pair<std::string, TList*>("Graph", m_listTGraph));
+    m_objectList.insert(std::make_pair("Graph", m_listTGraph));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void DMAHCALBooker::BookProfile(std::string hname, int NBins, int lower_bound, i
     hProf = new TProfile(name, "", NBins, lower_bound, upper_bound);
 
     m_listProf->Add(hProf);
-    m_objectList.insert(std::make_pair<std::string, TList*>("Profile", m_listProf));
+    m_objectList.insert(std::make_pair("Profile", m_listProf));
 }
 
 //-----------------------------------------------------------------------------------------------
