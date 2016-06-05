@@ -76,7 +76,8 @@ protected:
 private:
     //Class parameters
     bool EBU, MIP;
-    int nLayer, nMinHits, nMaxHits, nT0s;
+    static const int nLayer;
+    int nMinHits, nMaxHits, nT0s;
     float m_MIPcut;
     std::string m_runNumber, m_ArchiveName, m_Rootfile, m_IJKMapName, m_absorber;
 
