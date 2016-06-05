@@ -29,7 +29,7 @@ To compile do for Qt 4 :
 export QTDIR=/path/to/qt4
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=. -DWITH_QT5=OFF -DBUILD_DOCUMENTATION=ON
+cmake -DCMAKE_INSTALL_PREFIX=. -DWITH_QT5=OFF -DBUILD_DOCUMENTATION=ON ..
 make 
 make install
 </pre>
@@ -39,7 +39,7 @@ For Qt5 :
 export QTDIR=/path/to/qt5
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=. -DWITH_QT5=ON -DBUILD_DOCUMENTATION=ON
+cmake -DCMAKE_INSTALL_PREFIX=. -DWITH_QT5=ON -DBUILD_DOCUMENTATION=ON ..
 make 
 make install
 </pre>
