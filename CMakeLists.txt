@@ -143,6 +143,12 @@ LIST( APPEND ROOT_COMPONENT_LIST Core Hist Rint HistPainter Graf Graf3d MathCore
 FIND_PACKAGE( ROOT COMPONENTS ${ROOT_COMPONENT_LIST} REQUIRED )
 
 ################################################################
+# GLUT                                                         #
+################################################################
+
+find_package(GLUT REQUIRED)
+
+################################################################
 # Qt                                                           #
 ################################################################
 
