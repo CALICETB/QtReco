@@ -295,7 +295,7 @@ void AnalysisThread::T0_Correlation()
 	m_histoList->SetName("T0 Correlation List");
 
 	//Create histograms
-	TH2F *hCorrelationT0[nLayer];
+	std::vector<TH2F*> hCorrelationT0(nLayer);
 	for(std::map<int, std::vector<int> >::iterator it = m_map_T0s.begin(); it != m_map_T0s.end(); ++it)
 	{
 		int Layer = it->first;
@@ -438,7 +438,7 @@ void AnalysisThread::T0_Difference()
 	m_histoList->SetName("T0 Difference List");
 
 	//Create histograms
-	TH1F *hdT0[nLayer];
+	std::vector<TH1F*> hdT0(nLayer);
 	for(std::map<int, std::vector<int> >::iterator it = m_map_T0s.begin(); it != m_map_T0s.end(); ++it)
 	{
 		int Layer = it->first;
@@ -587,7 +587,7 @@ void AnalysisThread::T0_Sum()
 	}
 
 	//Create histograms
-	TH2F *hSumT0[nT0s];
+	std::vector<TH2F*> hSumT0(nT0s);
 	int i = 0;
 	for(std::map<int, std::vector<int> >::iterator it = m_map_T0s.begin(); it != m_map_T0s.end(); ++it)
 	{
@@ -983,7 +983,7 @@ void AnalysisThread::EnergyCell()
 
 	TIter next(m_histoList);
 	TObject *obj;
-	TH1F *pHisto[nLayer];
+	std::vector<TH1F*> pHisto(nLayer);
 	int index = 0;
 
 	while ((obj = next()))
@@ -1203,8 +1203,8 @@ void AnalysisThread::Hits()
 	m_HistoList = booker->GetObjects("1D");
 	m_HistoList->SetName("Histo NHits List");
 
-	int nhitover25[nLayer];
-	int nhitover50[nLayer];
+	std::vector<int> nhitover25(nLayer);
+	std::vector<int> nhitover50(nLayer);
 
 	//Loop over roofile
 	for(int n = 0; n < tree->GetEntries(); n++)
@@ -1468,7 +1468,7 @@ void AnalysisThread::Shower()
 	m_histo2DList = booker->GetObjects("2D");
 	m_histo2DList->SetName("Position comparison List");
 
-	float sumEnergy[nLayer];
+	std::vector<float> sumEnergy(nLayer);
 	float cogx, cogy, cogz = 0;
 	float SumE  = 0;
 	float SumXE, SumYE, SumZE =0;
@@ -1794,7 +1794,7 @@ void AnalysisThread::HitMap()
 	}
 
 	//Create histograms
-	TH2I *pHisto[nLayer];
+	std::vector<TH2I*> pHisto(nLayer);
 	for(int ilayer = 0; ilayer < nLayer; ilayer++)
 	{
 		TString hname = "Map_Layer";
