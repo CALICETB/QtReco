@@ -1,23 +1,23 @@
 
 file(GLOB GLOB_SRC
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/tinyxml/*.cpp)
+       /src/*.cpp
+       /src/tinyxml/*.cpp)
 
-SET( GLOB_INC
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/AnalysisModule.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/AnalysisThread.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/ApplicationModuleApi.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/DMAHCALBooker.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/DMAHCALMainWindow.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/DMAHCALStorage.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/EventDisplayWindow.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/glced.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/Logger.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/MarlinModule.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/RequestHandler.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/SedModule.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/ServerModule.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/include/XmlParser.h )
+SET ( INC_FILES
+       /include/AnalysisModule.h
+       /include/AnalysisThread.h
+       /include/ApplicationModuleApi.h
+       /include/DMAHCALBooker.h
+       /include/DMAHCALMainWindow.h
+       /include/DMAHCALStorage.h
+       /include/EventDisplayWindow.h
+       /include/glced.h
+       /include/Logger.h
+       /include/MarlinModule.h
+       /include/RequestHandler.h
+       /include/SedModule.h
+       /include/ServerModule.h
+       /include/XmlParser.h )
        
 file(GLOB GLOB_UI
         ${PROJECT_SOURCE_DIR}/ui/*.ui )
@@ -39,7 +39,7 @@ SET( QT_INCLUDE_DIRS ${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Core_INCLUDE_DIRS} ${Qt5Netw
 INCLUDE_DIRECTORIES( BEFORE include include/tinyxml ${QT_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} )
 SET(QT_LIBRARIES ${Qt5OpenGL_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} )
   
-QT5_WRAP_CPP(MOC_SRC_FILES ${GLOB_INC} )
+QT5_WRAP_CPP(MOC_SRC_FILES ${INC_FILES} )
 QT5_WRAP_UI(UI_FILES ${GLOB_UI} )
 QT5_ADD_RESOURCES(QRC_FILES ${GLOB_QRC} )
 
