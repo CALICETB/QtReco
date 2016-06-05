@@ -9,13 +9,16 @@ It includes a Qt Interface to deals with the reconstruction and also a module pe
 * g++ 4.7 minimum
 * CMake 2.6 
 * Qt version 4.7 or 5
-* Ilcsoft (Marlin, LCIO) not directly with GUI compilation
-* Calice Soft (Marlin processors for AHCAL Reconstruction) 
 * ROOT v5.30.XX
 * GLUT 
 * Git optional
 * Doxygen optional
 * Boost 1.36 minimum
+ 
+## Non-direct dependencies (Programs or librairies called during the reconstruction)
+
+* Ilcsoft (Marlin, LCIO) 
+* Calice Soft (Marlin processors for AHCAL Reconstruction) 
 
 ## Installation
 
