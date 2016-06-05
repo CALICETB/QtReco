@@ -1272,7 +1272,7 @@ void AnalysisThread::Hits()
 
 		TIter next(m_HistoList);
 		TObject *obj;
-		TH1F *pHisto[nLayer];
+		std::vector<TH1F*> pHisto(nLayer);
 		int index = 0;
 
 		//Fetch histograms and filling
