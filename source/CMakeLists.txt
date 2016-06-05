@@ -1,23 +1,23 @@
 
 file(GLOB GLOB_SRC
-       /src/*.cpp
-       /src/tinyxml/*.cpp)
+       src/*.cpp
+       src/tinyxml/*.cpp)
 
 SET ( INC_FILES
-       /include/AnalysisModule.h
-       /include/AnalysisThread.h
-       /include/ApplicationModuleApi.h
-       /include/DMAHCALBooker.h
-       /include/DMAHCALMainWindow.h
-       /include/DMAHCALStorage.h
-       /include/EventDisplayWindow.h
-       /include/glced.h
-       /include/Logger.h
-       /include/MarlinModule.h
-       /include/RequestHandler.h
-       /include/SedModule.h
-       /include/ServerModule.h
-       /include/XmlParser.h )
+       include/AnalysisModule.h
+       include/AnalysisThread.h
+       include/ApplicationModuleApi.h
+       include/DMAHCALBooker.h
+       include/DMAHCALMainWindow.h
+       include/DMAHCALStorage.h
+       include/EventDisplayWindow.h
+       include/glced.h
+       include/Logger.h
+       include/MarlinModule.h
+       include/RequestHandler.h
+       include/SedModule.h
+       include/ServerModule.h
+       include/XmlParser.h )
        
 file(GLOB GLOB_UI
         ${PROJECT_SOURCE_DIR}/ui/*.ui )
