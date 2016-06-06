@@ -80,8 +80,7 @@ void AnalysisThread::run()
 //Mapping
 bool AnalysisThread::MakeMapping()
 {
-	std::string FILE = "../xml/";
-	FILE += m_IJKMapName;
+	std::string FILE = m_IJKMapName;
 
 	ifstream fIn;
 	std::string line;
@@ -115,7 +114,7 @@ bool AnalysisThread::MakeMapping()
 	//Case no mapping file found
 	else
 	{
-		emit log("ERROR", QString("Can't find IJK map in xml folder %1!!").arg(QString::fromStdString(FILE)));
+		emit log("ERROR", QString("Can't find IJK map in %1!!").arg(QString::fromStdString(FILE)));
 		return false;
 	}
 }

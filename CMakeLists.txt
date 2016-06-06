@@ -205,3 +205,7 @@ MESSAGE( STATUS "FULL_INCLUDE_INSTALL_DIR                = ${FULL_INCLUDE_INSTAL
 
 MESSAGE( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
 MESSAGE( STATUS "-------------------------------------------------------------------------------" )
+
+INSTALL_DIRECTORY( scripts DESTINATION . FILES_MATCHING PATTERN "*.sh" )
+INSTALL_DIRECTORY( xml DESTINATION . FILES_MATCHING PATTERN "*.xml" )
+INSTALL_DIRECTORY( mapping DESTINATION . FILES_MATCHING PATTERN "*.txt" )
