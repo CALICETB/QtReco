@@ -11,7 +11,7 @@
 
   <!-- Mapping file -->
   <Mapping>
-    <parameter name="Filename" value="MapChipChan2IJK_May2016_2ndConfig.txt"/>
+    <parameter name="Filename" value="/mapping/MapChipChan2IJK_May2016_2ndConfig.txt"/>
   </Mapping>
 
   <T0s>
@@ -35,7 +35,7 @@
     <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
     <parameter name="Input_PATH" value="/home/calice/Desktop/EUDAQ_PC/EUDAQ1.6-TestBeamMay2016/data/PowerPulsing/powerpulsing/"/>
     <!-- Output File PATH -->
-    <parameter name="Output_PATH" value="/home/calice/Desktop/Reco_Data/May_2016"/>
+    <parameter name="Output_PATH" value="/home/calice/Desktop/Reco_Data"/>
     <!-- Pedestal substraction -->
     <parameter name="Pedestal" value="true"/>
     <!-- ADC to MIP Conversion -->
@@ -43,7 +43,7 @@
   </Steering>
 
   <Storage>
-    <parameter name="File" value="Archive_Monitor.root"/>
+    <parameter name="File" value="/tmp/Archive_Monitor.root"/>
   </Storage>
 
   <Analysis>
