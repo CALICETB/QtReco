@@ -7,7 +7,7 @@ echo "Output File SLCIO $4"
 echo "Pedestal Substraction $5"
 echo "ADC to MIP $6"
 
-HOME=/home/calice/OnlineMonitoring/QtReco
+HOME=/home/calice/OnlineMonitoring/build_QtReco
 
 cd $HOME
 
