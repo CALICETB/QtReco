@@ -11,7 +11,7 @@
 
   <!-- Mapping file -->
   <Mapping>
-    <parameter name="Filename" value="/mapping/MapChipChan2IJK_May2016_2ndConfig.txt"/>
+    <parameter name="Filename" value="/home/calice/OnlineMonitor/build_QtReco/mapping/MapChipChan2IJK_May2016_2ndConfig.txt"/>
   </Mapping>
 
   <T0s>
