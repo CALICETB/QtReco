@@ -33,7 +33,7 @@
     <parameter name="Run" value="41962"/>
     <!-- Input File PATH -->
     <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
-    <parameter name="Input_PATH" value="/home/calice/Desktop/EUDAQ_PC/EUDAQ1.6-TestBeamMay2016/data/PowerPulsing/powerpulsing/"/>
+    <parameter name="Input_PATH" value="/home/calice/Desktop/"/>
     <!-- Output File PATH -->
     <parameter name="Output_PATH" value="/home/calice/Desktop/Reco_Data"/>
     <!-- Pedestal substraction -->

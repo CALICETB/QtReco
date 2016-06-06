@@ -7,7 +7,7 @@ source ${ILC_SOFT}/init_ilcsoft.sh
 
 export MARLIN_DLL=
 export MARLIN_DLL=${MY_INSTALL}/lib/libuserlib.so
-export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libcaliceAnalysis.so
+#export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libcaliceAnalysis.so
 export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libraw2calohit.so
 export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libcellGeometry.so
 export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/librecoSiPM.so
