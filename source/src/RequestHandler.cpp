@@ -19,7 +19,7 @@ RequestHandler::~RequestHandler()
 //Get Objects from TFile, return TList
 TList *RequestHandler::GetObjects(std::string m_Archive, std::string RunDir, std::string SubDir)
 {
-    pArchive->OpenTFile(m_Archive, "OPEN");
+    pArchive->OpenTFile(("/tmp/" + m_Archive).c_str(), "OPEN");
     TList *m_allList = pArchive->GetObjects(RunDir, SubDir);
     return m_allList;
 }
