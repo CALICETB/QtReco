@@ -120,6 +120,8 @@ class XmlParser : public QObject
   //Print xml settings
   void PrintSettings();
 
+  void GetArchiveFromXml();
+
   //Parameter structure
   Parameters *parser;
 

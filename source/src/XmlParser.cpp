@@ -329,3 +329,54 @@ void XmlParser::PrintSettings()
     emit log("VERBOSE", QString("Run# %1 in %2 -- Storage: %3").arg(QString::fromStdString(parser->GetRunNumber()), QString::fromStdString(parser->GetRootfile()), QString::fromStdString(parser->GetArchive())));
     emit log("VERBOSE", QString("Number of Layer %1, EBU %2, ADC to MIP %3, Pedestal Substraction %4, MIP cut %5").arg(QString::number(parser->GetNLayer()), QString::number(parser->HasEBU()), QString::number(parser->HasADCtoMIP()), QString::number(parser->HasPedSubstraction()), QString::number(parser->GetMIPCut())));
 }
+
+//-----------------------------------------------------------------------------------------------
+
+void XmlParser::GetArchiveFromXml()
+{
+  std::string Archivefile;
+
+  std::string xmlfilename = "../xml/steering.xml";
+  
+  //load xml file
+  TiXmlDocument xmlDocument(xmlfilename.c_str());
+  bool loadOkay = xmlDocument.LoadFile();
+
+  if (loadOkay)
+    {
+      //Finding the root
+      TiXmlElement* root = xmlDocument.RootElement();
+      if(strcmp(root->Value(), "DMAHCAL") != 0)
+        {
+	  emit log("ERROR", "XmlHelper: Couldn't find xml root <DMAHCAL> in xml file");
+	  return;
+        }
+
+      //Reading Storage Element
+      TiXmlElement *const pStorageElement = root->FirstChildElement("Storage");
+      if(NULL == pStorageElement)
+        {
+	  emit log("ERROR", "XmlHelper: Couldn't find xml element <Storage> in xml file");
+	  return;
+        }
+
+      for(TiXmlElement *pXmlElement = pStorageElement->FirstChildElement("parameter"); NULL != pXmlElement; pXmlElement = pXmlElement->NextSiblingElement("parameter"))
+        {
+	  std::string parameterName;
+
+	  parameterName = getAttribute(pXmlElement,"name");
+
+	  if(parameterName == "File")
+            {
+	      Archivefile = getAttribute(pXmlElement,"value");
+            }
+        }
+
+      parser->SetArchiveFile(Archivefile);
+    }
+  else
+    {
+      emit log("ERROR", QString("XmlHelper: Couldn't load input xml file %1").arg(loadOkay));
+      return;
+    }  
+}

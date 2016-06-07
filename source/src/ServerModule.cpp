@@ -8,6 +8,7 @@ ServerModule::ServerModule()
     clientConnections = new TList();
     Running = false;
     stop = false;
+    m_Archive = "";
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -26,6 +27,7 @@ ServerModule::~ServerModule()
 void ServerModule::run()
 {
     this->StartServer();
+    return;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -59,10 +61,13 @@ void ServerModule::StartServer()
             //sleep of 1 secs
             sleep(1);
         }
+
+	return;
     }
     else //Error socket invalid
     {
         emit log("ERROR", QString("TCP Server : Can't start TSocketServer, error code : %1").arg(QString::number(server_sock->GetErrorCode())));
+	return;
     }
 }
 
@@ -116,18 +121,17 @@ void ServerModule::CheckClient(TSocket *s)
 
                 std::vector<std::string> tokens;
                 std::string delimiter = ",";
-                //Tokenize incoming string (Archive, Run, Plot)
+                //Tokenize incoming string (Run, Plot)
                 DMAHCAL::tokenize(request, tokens, delimiter);
 
-                std::string m_Archive = tokens.at(0);
-                std::string m_RunDir = tokens.at(1);
-                std::string m_SubDir = tokens.at(2);
+                std::string m_RunDir = tokens.at(0);
+                std::string m_SubDir = tokens.at(1);
 
                 //Handle the request
                 TList *m_list = new TList();
-                RequestHandler handler;
+                RequestHandler *handler = new RequestHandler(m_Archive);
                 //Get Plots into a TList
-                m_list = handler.GetObjects(m_Archive, m_RunDir, m_SubDir);
+                m_list = handler->GetObjects(m_RunDir, m_SubDir);
                 m_list->SetName(m_SubDir.c_str());
 
                 if(!m_list->IsEmpty())
@@ -137,6 +141,7 @@ void ServerModule::CheckClient(TSocket *s)
                     answer.WriteObjectAny(m_list, m_list->Class());
                     s->Send(answer);
                     delete m_list;
+		    delete handler;
                     return;
                 }
                 else
@@ -146,6 +151,7 @@ void ServerModule::CheckClient(TSocket *s)
                     TMessage answer(kMESS_STRING);
                     answer.WriteStdString("Run selected not available!");
                     s->Send(answer);
+		    delete handler;
                     return;
                 }
             }

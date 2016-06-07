@@ -18,6 +18,7 @@
 #include "TList.h"
 
 #include "RequestHandler.h"
+#include "XmlParser.h"
 
 /*
  * Server Thread Class
@@ -48,6 +49,8 @@ public:
     //Handleling of the client function
     void CheckClient(TSocket *s);
 
+    void SetArchive(std::string Archive) {m_Archive = Archive;}
+
 public slots:
     void RedirectLog(QString type, QString message);
 
@@ -59,6 +62,8 @@ private:
     //List of clients
     TList* clientConnections;
     bool Running, stop;
+
+    std::string m_Archive;
 
 signals:
     //Signal to logger

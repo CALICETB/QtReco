@@ -13,6 +13,7 @@
 #include <QObject>
 
 #include "DMAHCALStorage.h"
+#include "XmlParser.h"
 
 /*
  * Request Handler Class
@@ -24,12 +25,12 @@ class RequestHandler : public QObject
     Q_OBJECT
 public:
     //Constructor
-    RequestHandler();
+    RequestHandler(std::string Archive);
     //Destructor
     ~RequestHandler();
 
     //Get Objects from request
-    TList* GetObjects(std::string m_Archive, std::string RunDir, std::string SubDir);
+    TList* GetObjects(std::string RunDir, std::string SubDir);
 
 signals:
     //Signal to Logger
@@ -42,6 +43,7 @@ public slots:
 private:
     //TFile containing Plots (see DMAHCAL Class)
     DMAHCALStorage *pArchive;
+    std::string m_Archive;
 };
 
 #endif // REQUESTHANDLER_H

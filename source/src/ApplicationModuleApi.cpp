@@ -25,6 +25,7 @@ ApplicationModuleApi::ApplicationModuleApi()
 {
     //Parser Class pointer
     m_parser = new XmlParser();
+    m_parser->GetArchiveFromXml();
     //Server Class pointer
     m_server = new ServerModule();
     //EventDisplay Main window pointer
@@ -44,11 +45,14 @@ ApplicationModuleApi::ApplicationModuleApi()
     connect(m_sed, SIGNAL(log(QString,QString)), &m_logger, SLOT(Log(QString,QString)));
     connect(this, SIGNAL(log(QString,QString)), &m_logger, SLOT(Log(QString, QString)));
 
+    std::string m_Archive = m_parser->parser->GetArchive();
+    
     if(!m_server->isRunning())
-    {
+      {
         //Start Server
+	m_server->SetArchive(m_Archive);
         m_server->start();
-    }
+      }
 
     //Timer for update
     timer = new QTimer(this);
