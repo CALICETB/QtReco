@@ -7,12 +7,8 @@ echo "Output File SLCIO $4"
 echo "Pedestal Substraction $5"
 echo "ADC to MIP $6"
 
-HOME=/home/calice/OnlineMonitoring/build_QtReco
-
-cd $HOME
-
 rm -rf /tmp/Reco_Run_$1.xml
-cp $HOME/xml/Reco.xml /tmp/Reco_Run_$1.xml
+cp ${PWD}/../xml/Reco.xml /tmp/Reco_Run_$1.xml
 
 sed -i "s#INPUT#$2#g" /tmp/Reco_Run_$1.xml
 sed -i "s#RUNNUMBER#$1#g" /tmp/Reco_Run_$1.xml
