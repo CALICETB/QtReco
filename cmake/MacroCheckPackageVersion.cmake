@@ -105,3 +105,4 @@ MACRO( CHECK_PACKAGE_VERSION _pkgname ) # left with one argument only for backwa
     ENDIF( _sversion )
 
 ENDMACRO( CHECK_PACKAGE_VERSION )
+

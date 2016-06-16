@@ -1,0 +1,17 @@
+#ifndef QtRecoConfig_H
+#define QtRecoConfig_H
+
+// version macros
+#define QtReco_MAJOR_VERSION @QtReco_VERSION_MAJOR@
+#define QtReco_MINOR_VERSION @QtReco_VERSION_MINOR@
+#define QtReco_PATCH_LEVEL @QtReco_VERSION_PATCH@
+#define QtReco_VERSION_STR "@QtReco_VERSION_MAJOR@.@QtReco_VERSION_MINOR@.@QtReco_VERSION_PATCH@"
+#define QtReco_VERSION_GE( MAJV , MINV , PLEV )  \
+     ( (QtReco_MAJOR_VERSION > MAJV) || ( (QtReco_MAJOR_VERSION == MAJV) && (QtReco_MINOR_VERSION > MINV) ) \
+  || ( (QtReco_MAJOR_VERSION == MAJV) && (QtReco_MINOR_VERSION == MINV) && (QtReco_PATCH_LEVEL >= PLEV) ) )
+
+// project source dir
+// useful for icons
+#define QtReco_DIR "@CMAKE_INSTALL_PREFIX@"
+
+#endif // QtRecoConfig_H

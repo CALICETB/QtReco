@@ -1,0 +1,81 @@
+##############################################################################
+# cmake configuration file for QtReco
+#
+# requires:
+#   MacroCheckPackageLibs.cmake for checking package libraries
+#   MacroExportPackageDeps.cmake for exporting package dependencies
+#
+# returns following variables:
+#
+#   QtReco_FOUND      : set to TRUE if QtReco found
+#       if FIND_PACKAGE called with REQUIRED and COMPONENTS arguments
+#       QtReco_FOUND is only set to TRUE if ALL components are also found
+#       if REQUIRED is NOT set components may or may not be available
+#
+#   QtReco_ROOT       : path to this QtReco installation
+#   QtReco_VERSION    : package version
+#   QtReco_LIBRARIES  : list of QtReco libraries (NOT including COMPONENTS)
+#   QtReco_INCLUDE_DIRS  : list of paths to be used with INCLUDE_DIRECTORIES
+#   QtReco_LIBRARY_DIRS  : list of paths to be used with LINK_DIRECTORIES
+#   QtReco_COMPONENT_LIBRARIES      : list of QtReco component libraries
+#   QtReco_${COMPONENT}_FOUND       : set to TRUE or FALSE for each library
+#   QtReco_${COMPONENT}_LIBRARY     : path to individual libraries
+#   QtReco_${COMPONENT}_LIB_DEPENDS : individual library dependencies
+#
+# @author Jan Engels, Desy
+##############################################################################
+
+SET( QtReco_ROOT "@CMAKE_INSTALL_PREFIX@" )
+SET( QtReco_VERSION "@QtReco_VERSION@" )
+
+
+# ---------- include dirs -----------------------------------------------------
+# do not store find results in cache
+SET( QtReco_INCLUDE_DIRS QtReco_INCLUDE_DIRS-NOTFOUND )
+MARK_AS_ADVANCED( QtReco_INCLUDE_DIRS )
+
+FIND_PATH( QtReco_INCLUDE_DIRS
+	NAMES QtRecoConfig.h
+	PATHS @CMAKE_INSTALL_PREFIX@/include/
+	NO_DEFAULT_PATH
+)
+
+# ---------- libraries --------------------------------------------------------
+INCLUDE( "@QtReco_DIR@/cmake/MacroCheckPackageLibs.cmake" )
+
+# only standard libraries should be passed as arguments to CHECK_PACKAGE_LIBS
+# additional components are set by cmake in variable PKG_FIND_COMPONENTS
+# first argument should be the package name
+CHECK_PACKAGE_LIBS( QtReco QtReco )
+
+
+# ---------- dependencies -----------------------------------------------------
+INCLUDE( "@QtReco_DIR@/cmake/MacroExportPackageDeps.cmake" )
+# exports following package dependencies (if set)
+# first argument of macro should be the package name
+SET( QtReco_DEPENDS_INCLUDE_DIRS  @QtReco_DEPENDS_INCLUDE_DIRS@ )
+SET( QtReco_DEPENDS_LIBRARY_DIRS  @QtReco_DEPENDS_LIBRARY_DIRS@ )
+SET( QtReco_DEPENDS_LIBRARIES  @QtReco_DEPENDS_LIBRARIES@ )
+EXPORT_PACKAGE_DEPENDENCIES( QtReco )
+
+
+
+# ---------- final checking ---------------------------------------------------
+INCLUDE( FindPackageHandleStandardArgs )
+# set QtReco_FOUND to TRUE if all listed variables are TRUE and not empty
+# QtReco_COMPONENT_VARIABLES will be set if FIND_PACKAGE is called with REQUIRED argument
+FIND_PACKAGE_HANDLE_STANDARD_ARGS( QtReco DEFAULT_MSG QtReco_ROOT QtReco_INCLUDE_DIRS QtReco_LIBRARIES ${QtReco_COMPONENT_VARIABLES} )
+
+SET( QtReco_FOUND ${QtReco_FOUND} )
+
+
+
+# ---------- definitions ------------------------------------------------------
+IF( QtReco_FOUND )
+
+    IF( CMAKE_BUILD_TYPE STREQUAL "Debug" OR
+        CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" )
+        MARK_AS_ADVANCED( QtReco_DEFINITIONS )
+    ENDIF()
+
+ENDIF()

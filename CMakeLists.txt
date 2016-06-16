@@ -2,21 +2,13 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.6 FATAL_ERROR )
 #################################################
 
-#As of CMake 2.6.0 the ELSE() and ENDIF() constructs can be empty
-SET( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )
-cmake_policy(SET CMP0020 NEW)
-
 # ----- project name -----
-PROJECT( QTRECO )
+PROJECT( QtReco )
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 1 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 0 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
-# library *nix style versioning
-SET( ${PROJECT_NAME}_SOVERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}" )
-SET( ${PROJECT_NAME}_VERSION   "${${PROJECT_NAME}_SOVERSION}.${${PROJECT_NAME}_VERSION_PATCH}" )
-    
 #################################################################
 # Require C++11                                                 #
 #################################################################
@@ -31,79 +23,14 @@ ELSE()
 MESSAGE( SEND_ERROR "QtReco Client requires C++11 support. Please upgrade your compiler !" )
 ENDIF()
 
-IF(NOT CMAKE_BUILD_TYPE)
-SET(CMAKE_BUILD_TYPE RelWithDebInfo)
-ENDIF(NOT CMAKE_BUILD_TYPE)
+###############################
+# Dependencies
+LIST( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
+INCLUDE( default_settings )
 
-SET( CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE )
+######### Options #############
 
-#################################################################
-# cmake modules                                                 #
-#################################################################
-
-SET ( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
-
-INCLUDE ( MacroInstallDirectory )    
-INCLUDE( FULL_INSTALL_PATH )
-
-#################################################################
-# installation options                                          #
-#################################################################
-
-# change default install prefix
-IF( CMAKE_INSTALL_PREFIX STREQUAL "/usr/local" )
-    SET( CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}" CACHE PATH "Install prefix" FORCE )
-ENDIF( CMAKE_INSTALL_PREFIX STREQUAL "/usr/local" )
-
-# default destination for header files: ${CMAKE_INSTALL_PREFIX}/install
-SET( INCLUDE_INSTALL_DIR "include" CACHE PATH "Directory to install the header files" )
-MARK_AS_ADVANCED( INCLUDE_INSTALL_DIR )
-
-# default destination for executables: ${CMAKE_INSTALL_PREFIX}/install
-SET( BIN_INSTALL_DIR "bin" CACHE PATH "Directory to install the executables" )
-MARK_AS_ADVANCED( INCLUDE_INSTALL_DIR )
-
-# default destination for library files: ${CMAKE_INSTALL_PREFIX}/install
-SET( LIB_INSTALL_DIR "lib" CACHE PATH "Directory to install the libraries" )
-MARK_AS_ADVANCED( LIB_INSTALL_DIR )
-
-# default destination for .cmake files: ${CMAKE_INSTALL_PREFIX}/install
-SET( CONFIG_INSTALL_DIR "cmake" CACHE PATH "Directory to install the XXXConfig.cmake files" )
-MARK_AS_ADVANCED( CONFIG_INSTALL_DIR )
-
-# provide nicer directory layout in build directory
-SET( EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" CACHE PATH
-    "EXECUTABLE_OUTPUT_PATH" FORCE )
-SET( LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib" CACHE PATH
-    "LIBRARY_OUTPUT_PATH" FORCE )
-MARK_AS_ADVANCED( EXECUTABLE_OUTPUT_PATH LIBRARY_OUTPUT_PATH )
-
-##################################################################
-# install configuration                                          #
-##################################################################
-#compute install path for bin, lib and include
-FULL_INSTALL_PATH( LIB     FULL_LIB_INSTALL_DIR )
-FULL_INSTALL_PATH( INCLUDE FULL_INCLUDE_INSTALL_DIR )
-
-CONFIGURE_FILE( ${QTRECO_SOURCE_DIR}/cmake/QTRECOConfig.cmake.in
-                ${QTRECO_BINARY_DIR}/QTRECOConfig.cmake  @ONLY   )
-
-INSTALL( FILES ${QTRECO_BINARY_DIR}/QTRECOConfig.cmake
-         DESTINATION ${CONFIG_INSTALL_DIR}                               )
-
-# add library install path to the rpath list
-SET( CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" )
-MARK_AS_ADVANCED( CMAKE_INSTALL_RPATH )
-
-# add install path to the rpath list (apple)
-IF( APPLE )
-    SET( CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib" )
-    MARK_AS_ADVANCED( CMAKE_INSTALL_NAME_DIR )
-ENDIF()
-
-# append link pathes to rpath list
-SET( CMAKE_INSTALL_RPATH_USE_LINK_PATH 1 )
-MARK_AS_ADVANCED( CMAKE_INSTALL_RPATH_USE_LINK_PATH )
+OPTION( BUILD_DOCUMENTATION  "Set to OFF to skip build/install Documentation" ON )
 
 ################################################################
 # ROOT                                                         #
@@ -125,57 +52,68 @@ FIND_PACKAGE(GLUT REQUIRED)
 
 FIND_PACKAGE ( Boost 1.36.0 REQUIRED )
 
+# ----- Include package properties -----
+FOREACH( pkg ROOT GLUT Boost)
+
+  INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
+  LINK_LIBRARIES( ${${pkg}_LIBRARIES} )
+  ADD_DEFINITIONS ( ${${pkg}_DEFINITIONS} )
+
+  LIST( APPEND ${PROJECT_NAME}_DEPENDS_INCLUDE_DIRS ${${pkg}_INCLUDE_DIRS} )
+  LIST( APPEND ${PROJECT_NAME}_DEPENDS_LIBRARY_DIRS ${${pkg}_LIBRARY_DIRS} )
+  LIST( APPEND ${PROJECT_NAME}_DEPENDS_LIBRARIES ${${pkg}_LIBRARIES} )
+
+ENDFOREACH()
+
 ################################################################
 # Qt                                                           #
 ################################################################
 
-OPTION ( WITH_QT5 "Set to ON to build using Qt 5" OFF )
-
-IF( DEFINED ENV{QTDIR} )
-MESSAGE( STATUS "QT_ROOT_DIR Found in $ENV{QTDIR}" )
-SET( QT_ROOT_DIR "$ENV{QTDIR}" CACHE PATH "Qt directory" FORCE )
-ELSE ( DEFINED ENV{QTDIR} )
-SET( QT_ROOT_DIR "CMAKE_PREFIX_PATH" CACHE PATH "Qt directory" FORCE )
-ENDIF ( DEFINED ENV{QTDIR} )
-
+SET( QT_ROOT_DIR $ENV{QTDIR} )
 SET( QT_QMAKE_EXECUTABLE ${QT_ROOT_DIR}/bin/qmake )
 
-IF( WITH_QT5 )
-FIND_PACKAGE( Qt5 COMPONENTS Core Gui Widgets Network OpenGL REQUIRED )
-ELSE ( WITH_QT5 )
 FIND_PACKAGE( Qt4 COMPONENTS QtCore QtGui QtNetwork QtOpenGL REQUIRED )
+
+INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIRS} )
 ADD_DEFINITIONS ( ${QT_DEFINITIONS} )
+
 INCLUDE( ${QT_USE_FILE} )
-ENDIF( WITH_QT5 )
+
+LIST( APPEND ${PROJECT_NAME}_DEPENDS_INCLUDE_DIRS ${QT_INCLUDE_DIRS} )
+LIST( APPEND ${PROJECT_NAME}_DEPENDS_LIBRARY_DIRS ${QT_LIBRARY_DIRS} )
+LIST( APPEND ${PROJECT_NAME}_DEPENDS_LIBRARIES    ${QT_LIBRARIES}    )
+
+# ----- Install doc -----
+IF( BUILD_DOCUMENTATION )
+
+    FIND_PACKAGE( Doxygen )
+
+    IF( DOXYGEN_FOUND )
+        ADD_SUBDIRECTORY( ./doc )
+    ELSE()
+        MESSAGE( SEND_ERROR "Could not find doxygen required to build documentation" )
+        MESSAGE( "Please install doxygen or set BUILD_DOCUMENTATION to OFF" )
+        MESSAGE( "" )
+    ENDIF()
+
+ENDIF()
+
+# ---- Generate QtRecoConfig.h
+CONFIGURE_FILE( "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.h.cmake.in"
+    "${PROJECT_SOURCE_DIR}/source/include/${PROJECT_NAME}Config.h" @ONLY )
 
 # ----- Add source directory -----
 ADD_SUBDIRECTORY( ./source )
 
 ################################################################
-# documentation                                                #
-################################################################
 
-OPTION( BUILD_DOCUMENTATION  "Set to OFF to skip build/install Documentation" ON )
-
-IF( BUILD_DOCUMENTATION )
-INCLUDE( Documentation )
-ENDIF()
-
-################################################################
-# print status report                                          #
-################################################################
-MESSAGE( STATUS )
-MESSAGE( STATUS "-------------------------------------------------------------------------------" )
-MESSAGE( STATUS "CMAKE_INSTALL_PREFIX                    = ${CMAKE_INSTALL_PREFIX}" )
-MESSAGE( STATUS "BUILD_DOCUMENTATION                     = ${BUILD_DOCUMENTATION}" )
-MESSAGE( STATUS "WITH_QT5                                = ${WITH_QT5}" )
-MESSAGE( STATUS "QT_QMAKE_EXECUTABLE                     = ${QT_QMAKE_EXECUTABLE}" )
-MESSAGE( STATUS "FULL_LIB_INSTALL_DIR                    = ${FULL_LIB_INSTALL_DIR}" )
-MESSAGE( STATUS "FULL_INCLUDE_INSTALL_DIR                = ${FULL_INCLUDE_INSTALL_DIR}" )
-
-MESSAGE( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
-MESSAGE( STATUS "-------------------------------------------------------------------------------" )
-
+INSTALL ( DIRECTORY cmake DESTINATION . PATTERN "*.in" EXCLUDE )
 INSTALL_DIRECTORY( scripts DESTINATION . FILES_MATCHING PATTERN "*.sh" )
 INSTALL_DIRECTORY( xml DESTINATION . FILES_MATCHING PATTERN "*.xml" )
 INSTALL_DIRECTORY( mapping DESTINATION . FILES_MATCHING PATTERN "*.txt" )
+
+# ----- display some variables and write them to cache -----
+DISPLAY_STD_VARIABLES()
+
+# ----- generate and install following configuration files -----
+GENERATE_PACKAGE_CONFIGURATION_FILES( ${PROJECT_NAME}Config.cmake ${PROJECT_NAME}ConfigVersion.cmake ${PROJECT_NAME}LibDeps.cmake )

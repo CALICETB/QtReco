@@ -161,3 +161,4 @@ MACRO( CHECK_PACKAGE_LIBS _pkgname )
     #MESSAGE( STATUS "${_pkgname}_LIBRARY_DIRS: ${${_pkgname}_LIBRARY_DIRS}" )
 
 ENDMACRO( CHECK_PACKAGE_LIBS _pkgname )
+
