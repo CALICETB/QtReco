@@ -37,7 +37,7 @@ OPTION( BUILD_DOCUMENTATION  "Set to OFF to skip build/install Documentation" ON
 ################################################################
 
 # ----- Find ROOT package -----
-LIST( APPEND ROOT_COMPONENT_LIST Core Hist Rint HistPainter Graf Graf3d MathCore Net RIO Tree QtRoot GQt Gui )
+LIST( APPEND ROOT_COMPONENT_LIST Core Hist Rint HistPainter Graf Graf3d MathCore Net RIO Tree Gui )
 FIND_PACKAGE( ROOT COMPONENTS ${ROOT_COMPONENT_LIST} REQUIRED )
 
 ################################################################
@@ -108,9 +108,9 @@ ADD_SUBDIRECTORY( ./source )
 ################################################################
 
 INSTALL ( DIRECTORY cmake DESTINATION . PATTERN "*.in" EXCLUDE )
-INSTALL_DIRECTORY( scripts DESTINATION . FILES_MATCHING PATTERN "*.sh" )
-INSTALL_DIRECTORY( xml DESTINATION . FILES_MATCHING PATTERN "*.xml" )
-INSTALL_DIRECTORY( mapping DESTINATION . FILES_MATCHING PATTERN "*.txt" )
+INSTALL ( DIRECTORY scripts DESTINATION .FILES_MATCHING PATTERN "*.sh" )
+INSTALL ( DIRECTORY xml DESTINATION . FILES_MATCHING PATTERN "*.xml" )
+INSTALL ( DIRECTORY mapping DESTINATION . FILES_MATCHING PATTERN "*.txt" )
 
 # ----- display some variables and write them to cache -----
 DISPLAY_STD_VARIABLES()
