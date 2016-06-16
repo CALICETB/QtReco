@@ -47,7 +47,7 @@ INSTALL(
 )
 
 ADD_EXECUTABLE( QtReco_interface main/QtReco.cpp )
-TARGET_LINK_LIBRARIES( QtReco ${PROJECT_NAME} ${PROJECT_NAME} )
+TARGET_LINK_LIBRARIES( QtReco_interface ${PROJECT_NAME} ${PROJECT_NAME} )
 
 INSTALL(
     TARGETS QtReco_interface
