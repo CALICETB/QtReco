@@ -8,12 +8,13 @@ It includes a Qt Interface to deals with the reconstruction and also a module pe
 
 * g++ 4.7 minimum
 * CMake 2.6 
-* Qt version 4.7 or 5
+* ilcsoft v17-0X (v17-09 tested)
+* Qt version 4.7
 * ROOT v5.30.XX
 * GLUT 
-* Git optional
+* Git
 * Doxygen optional
-* Boost 1.36 minimum
+* Boost 1.36
  
 ## Non-direct dependencies (Programs or librairies called during the reconstruction)
 
@@ -27,22 +28,10 @@ Fairly simple, download the latest version :
 git clone https://github.com/CALICETB/QtReco.git
 </pre>
 
-To compile do for Qt 4 :
 <pre>
-export QTDIR=/path/to/qt4
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=. -DWITH_QT5=OFF -DBUILD_DOCUMENTATION=ON ..
-make 
-make install
-</pre>
-
-For Qt5 :
-<pre>
-export QTDIR=/path/to/qt5
-mkdir build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=. -DWITH_QT5=ON -DBUILD_DOCUMENTATION=ON ..
+cmake -DBUILD_DOCUMENTATION=ON ..
 make 
 make install
 </pre>
