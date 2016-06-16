@@ -105,35 +105,6 @@ ENDIF()
 SET( CMAKE_INSTALL_RPATH_USE_LINK_PATH 1 )
 MARK_AS_ADVANCED( CMAKE_INSTALL_RPATH_USE_LINK_PATH )
 
-
-################################################################
-# Git                                                          #
-################################################################
-
-OPTION ( USE_GIT "Set to OFF to skip git pull" ON )
-
-IF( USE_GIT )
-FIND_PACKAGE( Git )
-IF( GIT_FOUND )
-
-	MESSAGE( STATUS "" )
-    MESSAGE( STATUS "---------------------------------------" )
-    MESSAGE( STATUS "    Git found: ${GIT_EXECUTABLE}       " )
-    MESSAGE( STATUS "    Pulling last Qt Reco version       " )
-    MESSAGE( STATUS "---------------------------------------" )
-    MESSAGE( STATUS "" )
-    
-    EXECUTE_PROCESS(
-      COMMAND git pull
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    )
-ELSE ( GIT_FOUND )
-    MESSAGE( WARNING "************************************************************")
-    MESSAGE( WARNING "*      Git was not found! No pulling can be done.          *")
-    MESSAGE( WARNING "************************************************************")
-ENDIF( GIT_FOUND )
-ENDIF()
-
 ################################################################
 # ROOT                                                         #
 ################################################################
@@ -196,7 +167,6 @@ ENDIF()
 MESSAGE( STATUS )
 MESSAGE( STATUS "-------------------------------------------------------------------------------" )
 MESSAGE( STATUS "CMAKE_INSTALL_PREFIX                    = ${CMAKE_INSTALL_PREFIX}" )
-MESSAGE( STATUS "USE_GIT                                 = ${USE_GIT}" )
 MESSAGE( STATUS "BUILD_DOCUMENTATION                     = ${BUILD_DOCUMENTATION}" )
 MESSAGE( STATUS "WITH_QT5                                = ${WITH_QT5}" )
 MESSAGE( STATUS "QT_QMAKE_EXECUTABLE                     = ${QT_QMAKE_EXECUTABLE}" )
