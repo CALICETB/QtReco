@@ -1834,6 +1834,9 @@ void AnalysisThread::HitMap()
 
       pHisto[ilayer]->GetXaxis()->SetTitle("I");
       pHisto[ilayer]->GetYaxis()->SetTitle("J");
+      pHisto[ilayer]->SetOptStat(0);
+      pHisto[ilayer]->GetXais()->SetLabelSize(0.1);
+      pHisto[ilayer]->GetXais()->SetTitleSize(0.1);
     }
 
   //Create list
@@ -1858,7 +1861,7 @@ void AnalysisThread::HitMap()
 
 	  //inverse filling because reverse axis /*Energy weighted */
 //	  pHisto[layer-1]->Fill(25 - I , J, 1);
-	  pHisto[layer-1]->Fill(13 - I , J, 1);
+	  pHisto[layer-1]->Fill(7 - I , J - 6, 1);
 	  //pHisto[layer]->Fill(25 - I , J, ahc_hitEnergy[i]);
 	}
 
