@@ -1690,6 +1690,7 @@ void AnalysisThread::Shower()
 	{
 	  TH2F* pHisto = static_cast<TH2F*>(obj);
 	  pHisto->Fill(cogx, cogy);
+          pHisto->SetStats(kFALSE);
 	  pHisto->GetXaxis()->SetTitle("Cog X [mm]");
 	  pHisto->GetYaxis()->SetTitle("Cog Y [mm]");
 	  pHisto->SetDrawOption("COLZ");
@@ -1838,10 +1839,10 @@ void AnalysisThread::HitMap()
       pHisto[ilayer]->GetXaxis()->SetTitle("I");
       pHisto[ilayer]->GetYaxis()->SetTitle("J");
       pHisto[ilayer]->SetStats(kFALSE);
-      pHisto[ilayer]->GetXaxis()->SetLabelSize(0.2);
-      pHisto[ilayer]->GetXaxis()->SetTitleSize(0.2);
-      pHisto[ilayer]->GetYaxis()->SetLabelSize(0.3);
-      pHisto[ilayer]->GetYaxis()->SetTitleSize(0.3);
+      pHisto[ilayer]->GetXaxis()->SetLabelSize(0.25);
+      pHisto[ilayer]->GetXaxis()->SetTitleSize(0.25);
+      pHisto[ilayer]->GetYaxis()->SetLabelSize(0.25);
+      pHisto[ilayer]->GetYaxis()->SetTitleSize(0.25);
     }
 
   //Create list
