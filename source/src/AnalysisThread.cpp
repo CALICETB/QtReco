@@ -1839,10 +1839,6 @@ void AnalysisThread::HitMap()
       pHisto[ilayer]->GetXaxis()->SetTitle("I");
       pHisto[ilayer]->GetYaxis()->SetTitle("J");
       pHisto[ilayer]->SetStats(kFALSE);
-      pHisto[ilayer]->GetXaxis()->SetLabelSize(0.25);
-      pHisto[ilayer]->GetXaxis()->SetTitleSize(0.25);
-      pHisto[ilayer]->GetYaxis()->SetLabelSize(0.25);
-      pHisto[ilayer]->GetYaxis()->SetTitleSize(0.25);
     }
 
   //Create list
