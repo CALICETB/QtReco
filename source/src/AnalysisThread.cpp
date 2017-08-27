@@ -1861,7 +1861,7 @@ void AnalysisThread::HitMap()
 
 	  //inverse filling because reverse axis /*Energy weighted */
 //	  pHisto[layer-1]->Fill(25 - I , J, 1);
-	  pHisto[layer-1]->Fill(7 - I , J - 6, 1);
+	  pHisto[layer-1]->Fill(19 - I , J - 6, 1);
 	  //pHisto[layer]->Fill(25 - I , J, ahc_hitEnergy[i]);
 	}
 
