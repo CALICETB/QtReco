@@ -1700,6 +1700,9 @@ void AnalysisThread::Shower()
       while((obj = next3()))
 	{
 	  TProfile* prof = static_cast<TProfile*>(obj);
+          prof->SetStats(kFALSE);
+          prof->GetXaxis()->SetTitle("Layer");
+          prof->GetYaxis()->SetTitle("mean energy [MIPs]");
 	  for(int iLayer = 0; iLayer < nLayer; iLayer++)
 	    {
 	      prof->Fill(iLayer+1, sumEnergy[iLayer], 1);
@@ -1835,8 +1838,10 @@ void AnalysisThread::HitMap()
       pHisto[ilayer]->GetXaxis()->SetTitle("I");
       pHisto[ilayer]->GetYaxis()->SetTitle("J");
       pHisto[ilayer]->SetStats(kFALSE);
-      pHisto[ilayer]->GetXaxis()->SetLabelSize(0.1);
-      pHisto[ilayer]->GetXaxis()->SetTitleSize(0.1);
+      pHisto[ilayer]->GetXaxis()->SetLabelSize(0.2);
+      pHisto[ilayer]->GetXaxis()->SetTitleSize(0.2);
+      pHisto[ilayer]->GetYaxis()->SetLabelSize(0.3);
+      pHisto[ilayer]->GetYaxis()->SetTitleSize(0.3);
     }
 
   //Create list
