@@ -1829,8 +1829,8 @@ void AnalysisThread::HitMap()
       TString hname = "Map_Layer";
       hname += ilayer+1;
 
-      //SPECIFIC TO DESY May 2016
-      pHisto[ilayer] = new TH2I(hname, hname, 24, 0.5, 24.5, 24, 0.5, 24.5);
+      //SPECIFIC TO CERN May 2017
+      pHisto[ilayer] = new TH2I(hname, hname, 12, 0.5, 12.5, 12, 0.5, 12.5);
 
       pHisto[ilayer]->GetXaxis()->SetTitle("I");
       pHisto[ilayer]->GetYaxis()->SetTitle("J");
@@ -1857,7 +1857,8 @@ void AnalysisThread::HitMap()
 	  if (isT0channel) continue;
 
 	  //inverse filling because reverse axis /*Energy weighted */
-	  pHisto[layer-1]->Fill(25 - I , J, 1);
+//	  pHisto[layer-1]->Fill(25 - I , J, 1);
+	  pHisto[layer-1]->Fill(13 - I , J, 1);
 	  //pHisto[layer]->Fill(25 - I , J, ahc_hitEnergy[i]);
 	}
 
