@@ -14,7 +14,7 @@
 
 <marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
   <execute>
-    <processor name="EUDAQEventBuilder2016"/>
+    <processor name="EUDAQEventBuilder2016_woBIF"/>
     <!--processor name="MyLabviewConverter2"/-->
     <processor name="ProgressHandler"/>
     <processor name="GeoConditions"/>
@@ -24,7 +24,7 @@
     <processor name="Ahc2CalibrateProcessorHCAL"/>
     <processor name="Ahc2CalibrateProcessorECAL"/>
     <processor name="EcalRootTreeWriter"/>
-    <processor name="HcalRootTreeWriter"/>
+    <processor name="HcalRootTreeWriter_woBIF"/>
     <!--processor name="MyRunTimeInfo"/-->
     <processor name="MyLCIOOutputProcessor"/>
   </execute>
@@ -40,7 +40,7 @@
     <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> ERROR </parameter> 
   </global>
 
-  <processor name="EUDAQEventBuilder2016" type="EUDAQEventBuilder2016">
+  <processor name="EUDAQEventBuilder2016_woBIF" type="EUDAQEventBuilder2016_woBIF">
     <parameter name="DetectorType" type="string"> ScCAL </parameter>
     <!--INPUT COLLECTIONS-->
     <!--Name of the input collection of EUDAQ lcio raw data-->
@@ -58,7 +58,8 @@
 
   <processor name="MyRunTimeInfo" type="RunTimeProcessor">
   <parameter name="RunTimeCollectionName" type="string"> /cd_calice_cernSPS2015/TestbeamJuly2015/RunTimeInfo </parameter>
-  <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:calicedb:gFd+5Thn:3306"/>
+  <!--parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/-->
+   <parameter name="DBInit" type="string" value="127.0.0.1:calice:caliceon:Delice.1:33306"/> 
   </processor>
 
   <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
@@ -104,22 +105,24 @@
 
 
   <processor name="GeoConditions" type="ConditionsProcessor">
-    <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/>
+    <parameter name="DBInit" type="string" value="127.0.0.1:calice:caliceon:Delice.1:33306"/>
     <parameter name="DBCondHandler" type="StringVec">
-      Ahc2ModuleDescription        /test_eldwan/TestbeamMay2016/ModuleDescription               HEAD
-      Ahc2ModuleConnection         /test_eldwan/TestbeamMay2016/ModuleConnection                HEAD
-      Ahc2ModuleLocationReference  /test_eldwan/TestbeamMay2016/ModuleLocationReference         HEAD
-      Ahc2DetectorTransformation   /test_eldwan/TestbeamMay2016/DetectorTransformation          HEAD
-      Ahc2HardwareConnection       /test_eldwan/TestbeamMay2016/Ahc2HardwareConnection          HEAD
-      E4DPedestal                  /test_eldwan/TestbeamMay2016/Pedestal                        HEAD
-      E4DGainConstants             /test_eldwan/TestbeamMay2016/gain_constants                  HEAD
-      E4DGainSlopes                /test_eldwan/TestbeamMay2016/gain_slopes                     HEAD
-      E4DMipConstants              /test_eldwan/TestbeamMay2016/mip_constants                   HEAD
-      E4DMipSlopes                 /test_eldwan/TestbeamMay2016/mip_slopes                      HEAD
-      E4DDeadCellMap               /test_eldwan/TestbeamMay2016/DeadCellMap                     HEAD
-      E4DSaturationParameters      /test_eldwan/TestbeamMay2016/SaturationParameters            HEAD
-      E4DIntercalibration          /test_eldwan/TestbeamMay2016/Intercalibration                HEAD
-      E4DPhysicsCalibIntercalibration          /test_eldwan/TestbeamMay2016/PhysicsCalibIntercalibration   HEAD
+      Ahc2ModuleDescription        /cd_calice_Ahc2/TestbeamJuly2017/ModuleDescription               HEAD
+      Ahc2ModuleConnection         /cd_calice_Ahc2/TestbeamJuly2017/ModuleConnection                HEAD
+      Ahc2ModuleLocationReference  /cd_calice_Ahc2/TestbeamJuly2017/ModuleLocationReference         HEAD
+      Ahc2DetectorTransformation   /cd_calice_Ahc2/TestbeamJuly2017/DetectorTransformation          HEAD
+      Ahc2HardwareConnection       /cd_calice_Ahc2/TestbeamJuly2017/Ahc2HardwareConnection          HEAD
+      E4DPedestal                  /cd_calice_Ahc2/TestbeamJuly2017/Pedestal                        HEAD
+      E4DGainConstants             /cd_calice_Ahc2/TestbeamJuly2017/gain_constants                  HEAD
+      E4DGainSlopes                /cd_calice_Ahc2/TestbeamJuly2017/gain_slopes                     HEAD
+      E4DMipConstants              /cd_calice_Ahc2/TestbeamJuly2017/mip_constants                   HEAD
+      E4DMipSlopes                 /cd_calice_Ahc2/TestbeamJuly2017/mip_slopes                      HEAD
+      E4DDeadCellMap               /cd_calice_Ahc2/TestbeamJuly2017/DeadCellMap                     HEAD
+      E4DSaturationParameters      /cd_calice_Ahc2/TestbeamJuly2017/SaturationParameters            HEAD
+      E4DIntercalibration          /cd_calice_Ahc2/TestbeamJuly2017/Intercalibration                HEAD
+      E4DPhysicsCalibIntercalibration          /cd_calice_Ahc2/TestbeamJuly2017/PhysicsCalibIntercalibration   HEAD
+      E4DTimeSlopes                /cd_calice_Ahc2/TestbeamJuly2017/TimeSlopes                      HEAD
+      E4DTimePedestal              /cd_calice_Ahc2/TestbeamJuly2017/TimePedestal                    HEAD
     </parameter>
   </processor>
 
@@ -151,7 +154,8 @@
 
   <processor name="Ahc2CalibrationsProcessor" type="Ahc2CalibrationsProcessor">
     <!--Processor that provides a MappedContainer of SiPMCalibrations objects-->
-    <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
+    <!--Name of the MappingProcessor instance that provides the geometry of the 
+detector.-->
     <parameter name="MappingProcessorName" type="string"> Ahc2MappingProcessor </parameter>
     <!--Name of the pedestal collection-->
     <parameter name="PedestalCollection" type="string" lcioInType="LCGenericObject"> E4DPedestal </parameter>
@@ -166,11 +170,15 @@
     <!--Name of the interCalibration collection-->
     <parameter name="InterCalibrationCollection" type="string" lcioInType="LCGenericObject"> E4DIntercalibration </parameter>
     <!--Name of the interCalibration physics calib collection-->
-    <parameter name="PhysicsCalibICCollection" type="string" lcioInType="LCGenericObject"> E4DPhysicsCalibIntercalibration </parameter>
+    <parameter name="PhysicsCalibICCollection" type="string" lcioInType="LCGenericObject"> E4DPhysicsCalibIntercalibration </parameter> 
     <!--Name of the saturation collection-->
     <parameter name="SaturationParametersCollection" type="string" lcioInType="LCGenericObject"> E4DSaturationParameters </parameter>
     <!--Collection with quality flags-->
     <parameter name="CellQualityCollection" type="string" lcioInType="LCGenericObject"> E4DDeadCellMap </parameter>
+    <!--Name of the time slope collection-->
+    <parameter name="TimeSlopesParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeSlopes </parameter>
+    <!--Name of the time pedestal collection-->
+    <parameter name="TimePedestalParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimePedestal </parameter>
   </processor>
 
   <processor name="Ahc2CalibrateProcessorHCAL" type="Ahc2CalibrateProcessor">
@@ -274,7 +282,7 @@
   </processor>
 
   <!-- Write root file containing Temp data -->
-  <processor name="HcalRootTreeWriter" type="RootTreeWriter">
+  <processor name="HcalRootTreeWriter_woBIF" type="RootTreeWriter">
     <!--Name of the output ROOT file-->
     <parameter name="OutFileName" type="string"> OUTPUT_ROOT </parameter>
     <parameter name="HitWriteEngine_enable" type="int">1 </parameter>

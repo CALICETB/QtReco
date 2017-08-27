@@ -11,29 +11,30 @@
 
   <!-- Mapping file -->
   <Mapping>
-    <parameter name="Filename" value="/home/calice/OnlineMonitor/build_QtReco/mapping/MapChipChan2IJK_May2016_2ndConfig.txt"/>
+    <parameter name="Filename" value="/home/calice/Desktop/AHCAL-Reconstruction/mapping/MapChipChan2IJK_July2017_HGCALBH.txt"/>
   </Mapping>
 
   <T0s>
     <!-- Number of T0s/Cherenkov -->
-    <parameter name="nT0s" value="6"/>
+    <parameter name="nT0s" value="0"/>
     <!--Layer Chip Channel -->
-    <parameter name="T0_1" value="1 169 29"/>
-    <parameter name="T0_2" value="1 177 23"/>
-    <parameter name="T0_3" value="3 201 29"/>
-    <parameter name="T0_4" value="3 211 6"/>
-    <parameter name="T0_5" value="4 217 23"/>
-    <parameter name="T0_6" value="4 227 6"/>
+    <!--parameter name="T0_1" value="1 169 29"/-->
+    <!--parameter name="T0_2" value="1 177 23"/-->
+    <!--parameter name="T0_3" value="3 201 29"/-->
+    <!--parameter name="T0_4" value="3 211 6"/-->
+    <!--parameter name="T0_5" value="4 217 23"/-->
+    <!--parameter name="T0_6" value="4 227 6"/-->
   </T0s>
 
   <Steering> 
     <!-- Aborber type Tungsten/Iron -->
     <parameter name="Absorber" value="Iron"/>
     <!-- Run Number -->
-    <parameter name="Run" value="41962"/>
+    <parameter name="Run" value="001189"/>
     <!-- Input File PATH -->
     <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
-    <parameter name="Input_PATH" value="/home/calice/Desktop/"/>
+    <!-- parameter name="Input_PATH" value="/home/calice/Desktop/"/-->
+    <parameter name="Input_PATH" value="/home/calice/Desktop/EUDAQ_PC/Desktop/EUDAQ1.6-testbeam2017July/data/lcio_converted/hgcal/"/>
     <!-- Output File PATH -->
     <parameter name="Output_PATH" value="/home/calice/Desktop/Reco_Data"/>
     <!-- Pedestal substraction -->
@@ -52,13 +53,13 @@
     <!-- MIP Cut value -->
     <parameter name="MIP_Cut" value="0.5"/>
     <!-- Nlayers -->
-    <parameter name="NLayer" value="3"/>
+    <parameter name="NLayer" value="12"/>
     <!-- nT0s for Analysis -->
     <parameter name="nT0s" value="0"/>
     <!-- Cut on Min Number of Hits in Event -->
-    <parameter name="NMinHits" value="0"/>
+    <parameter name="NMinHits" value="3"/>
     <!-- Cut on Max Number of Hits in Event -->
-    <parameter name="NMaxHits" value="30"/>
+    <parameter name="NMaxHits" value="1000"/>
   </Analysis>
 
 </DMAHCAL>
