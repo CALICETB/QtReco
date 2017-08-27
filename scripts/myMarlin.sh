@@ -1,7 +1,7 @@
 #!/bin/bash
 
-ILC_SOFT=/home/calice/ilcsoft/v01-17-09
-MY_INSTALL=/home/calice/Calice_soft/myInstall
+ILC_SOFT=/home/calice/Desktop/ILCSoftInstall/ilcsoft/
+MY_INSTALL=/home/calice/Desktop/CaliceInstall/build/myInstall
 
 source ${ILC_SOFT}/init_ilcsoft.sh
 
