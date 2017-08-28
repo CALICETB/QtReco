@@ -1468,17 +1468,17 @@ void AnalysisThread::Shower()
   booker->BookProfile("Profile_EnergyPerLayer", nLayer, 0.5, nLayer+0.5);
   //Center of gravity in X
 //  booker->Book1DHistograms("MeanX", 360, -360, 360);
-  booker->Book1DHistograms("MeanX", 360, -180, 180);
+  booker->Book1DHistograms("CenterOfGravity_X", 360, -180, 180);
   //Center of gravity in Y
 //  booker->Book1DHistograms("MeanY", 360, -360, 360);
-  booker->Book1DHistograms("MeanY", 360, -180, 180);
+  booker->Book1DHistograms("CenterOfGravity_Y", 360, -180, 180);
   //Center of gravity in Z
-  booker->Book1DHistograms("MeanZ", 1000, 0, 1000);
+  booker->Book1DHistograms("CenterOfGravity_Z", 1000, 0, 1000);
   //Shower radius
-  booker->Book1DHistograms("MeanR", 50, -10/MoliereRadius, 400/MoliereRadius);
+  booker->Book1DHistograms("Mean_Shower_Radius", 50, -10/MoliereRadius, 400/MoliereRadius);
   //Center of gravity in X versus Center of gravity in Y
 //  booker->Book2DHistograms("MeanX_vs_MeanY", 13, -360, 360);
-  booker->Book2DHistograms("MeanX_vs_MeanY", 36, -180, 180);
+  booker->Book2DHistograms("CoGY_vs_CoGX", 36, -180, 180);
   //Shower radius versus center of gravity in Z
   //booker->Book2DHistograms("MeanR vs MeanZ", 400, 0, 800);
 
@@ -1835,9 +1835,11 @@ void AnalysisThread::HitMap()
     {
       TString hname = "Map_Layer";
       hname += ilayer+1;
+      TString htitle = "Transverse shower profile layer ";
+      hname += ilayer+1;
 
       //SPECIFIC TO CERN May 2017
-      pHisto[ilayer] = new TH2I(hname, hname, 12, 0.5, 12.5, 12, 0.5, 12.5);
+      pHisto[ilayer] = new TH2I(hname, htitle, 12, 0.5, 12.5, 12, 0.5, 12.5);
 
       pHisto[ilayer]->GetXaxis()->SetTitle("I");
       pHisto[ilayer]->GetYaxis()->SetTitle("J");

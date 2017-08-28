@@ -31,7 +31,7 @@ void DMAHCALBooker::Book1DHistograms(std::string hname, int NBins, float lower_b
     TH1F *h1D;
     TString name = hname;
 
-    h1D = new TH1F(name, "", NBins, lower_bound, upper_bound);
+    h1D = new TH1F(name, name, NBins, lower_bound, upper_bound);
     m_list1D->Add(h1D);
 
     m_objectList.insert(std::make_pair("1D", m_list1D));
@@ -48,7 +48,7 @@ void DMAHCALBooker::Book1DHistograms(std::string hname, int NLayer, int NBins, f
     {
         name = hname;
         name += i+1;
-        h1D[i] = new TH1F(name, "", NBins, lower_bound, upper_bound);
+        h1D[i] = new TH1F(name, name, NBins, lower_bound, upper_bound);
         m_list1D->Add(h1D[i]);
     }
 
@@ -62,7 +62,7 @@ void DMAHCALBooker::Book2DHistograms(std::string hname, int NBins, float lower_b
     TH2F *h2D;
     TString name = hname;
 
-    h2D = new TH2F(name, "", NBins, lower_bound, upper_bound, NBins, lower_bound, upper_bound);
+    h2D = new TH2F(name, name, NBins, lower_bound, upper_bound, NBins, lower_bound, upper_bound);
 
     m_list2D->Add(h2D);
 
@@ -91,7 +91,7 @@ void DMAHCALBooker::BookProfile(std::string hname, int NBins, float lower_bound,
     TProfile *hProf;
     TString name = hname;
 
-    hProf = new TProfile(name, "", NBins, lower_bound, upper_bound);
+    hProf = new TProfile(name, name, NBins, lower_bound, upper_bound);
 
     m_listProf->Add(hProf);
     m_objectList.insert(std::make_pair("Profile", m_listProf));
