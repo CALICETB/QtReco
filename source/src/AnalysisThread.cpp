@@ -992,7 +992,7 @@ void AnalysisThread::EnergyCell()
   DMAHCALBooker *booker = new DMAHCALBooker("HitenergyPerLayer");
 
   std::string hname = "Hitenergy_Layer_";
-  booker->Book1DHistograms(hname, nLayer, 80, -0.5, 4);
+  booker->Book1DHistograms(hname, nLayer, 80, 0., 4.);
   booker->SetAxis("1D", "Energy [MIP]", "# Entries");
 
   //Create TList and get histograms
