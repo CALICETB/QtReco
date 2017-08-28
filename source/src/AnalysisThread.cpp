@@ -1835,7 +1835,7 @@ void AnalysisThread::HitMap()
     {
       TString hname = "Map_Layer";
       hname += ilayer+1;
-      TString htitle = "Transverse shower profile layer ";
+      TString htitle = "Transverse profile layer ";
       htitle += ilayer+1;
       htitle += " (# hits)";
 
