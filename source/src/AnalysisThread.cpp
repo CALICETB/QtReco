@@ -1465,17 +1465,20 @@ void AnalysisThread::Shower()
     MoliereRadius = 1.71*10; //mm
 
   //Energy Profile
-  booker->BookProfile("Profile_EnergyPerLayer", nLayer+1, -0.5, nLayer+1.5);
+  booker->BookProfile("Profile_EnergyPerLayer", nLayer, 0.5, nLayer+0.5);
   //Center of gravity in X
-  booker->Book1DHistograms("MeanX", 360, -360, 360);
+//  booker->Book1DHistograms("MeanX", 360, -360, 360);
+  booker->Book1DHistograms("MeanX", 360, -180, 180);
   //Center of gravity in Y
-  booker->Book1DHistograms("MeanY", 360, -360, 360);
+//  booker->Book1DHistograms("MeanY", 360, -360, 360);
+  booker->Book1DHistograms("MeanY", 360, -180, 180);
   //Center of gravity in Z
   booker->Book1DHistograms("MeanZ", 1000, 0, 1000);
   //Shower radius
   booker->Book1DHistograms("MeanR", 50, -10/MoliereRadius, 400/MoliereRadius);
   //Center of gravity in X versus Center of gravity in Y
-  booker->Book2DHistograms("MeanX_vs_MeanY", 13, -360, 360);
+//  booker->Book2DHistograms("MeanX_vs_MeanY", 13, -360, 360);
+  booker->Book2DHistograms("MeanX_vs_MeanY", 36, -180, 180, 36, -180, 180);
   //Shower radius versus center of gravity in Z
   //booker->Book2DHistograms("MeanR vs MeanZ", 400, 0, 800);
 
