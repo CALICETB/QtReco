@@ -1837,6 +1837,7 @@ void AnalysisThread::HitMap()
       hname += ilayer+1;
       TString htitle = "Transverse shower profile layer ";
       htitle += ilayer+1;
+      htitle += " (# hits)";
 
       //SPECIFIC TO CERN May 2017
       pHisto[ilayer] = new TH2I(hname, htitle, 12, 0.5, 12.5, 12, 0.5, 12.5);
