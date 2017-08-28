@@ -26,7 +26,7 @@ DMAHCALBooker::~DMAHCALBooker()
 
 //-----------------------------------------------------------------------------------------------
 
-void DMAHCALBooker::Book1DHistograms(std::string hname, int NBins, int lower_bound, int upper_bound)
+void DMAHCALBooker::Book1DHistograms(std::string hname, int NBins, float lower_bound, float upper_bound)
 {
     TH1F *h1D;
     TString name = hname;
@@ -39,7 +39,7 @@ void DMAHCALBooker::Book1DHistograms(std::string hname, int NBins, int lower_bou
 
 //-----------------------------------------------------------------------------------------------
 
-void DMAHCALBooker::Book1DHistograms(std::string hname, int NLayer, int NBins, int lower_bound, int upper_bound)
+void DMAHCALBooker::Book1DHistograms(std::string hname, int NLayer, int NBins, float lower_bound, float upper_bound)
 {
     std::vector<TH1F*> h1D(NLayer);
     TString name;
@@ -57,7 +57,7 @@ void DMAHCALBooker::Book1DHistograms(std::string hname, int NLayer, int NBins, i
 
 //-----------------------------------------------------------------------------------------------
 
-void DMAHCALBooker::Book2DHistograms(std::string hname, int NBins, int lower_bound, int upper_bound)
+void DMAHCALBooker::Book2DHistograms(std::string hname, int NBins, float lower_bound, float upper_bound)
 {
     TH2F *h2D;
     TString name = hname;

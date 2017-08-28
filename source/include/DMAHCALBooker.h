@@ -36,15 +36,15 @@ public:
     ~DMAHCALBooker();
 
     //Booking of TH1
-    void Book1DHistograms(std::string hname, int NBins, int lower_bound, int upper_bound);
+    void Book1DHistograms(std::string hname, int NBins, float lower_bound, float upper_bound);
     //Booking of several TH1
-    void Book1DHistograms(std::string hname, int NLayer, int NBins, int lower_bound, int upper_bound);
+    void Book1DHistograms(std::string hname, int NLayer, int NBins, float lower_bound, float upper_bound);
     //Booking of TGraph
     void BookTGraph(int npoint, std::string tname);
     //Booking of TH2
-    void Book2DHistograms(std::string hname, int NBins, int lower_bound, int upper_bound);
+    void Book2DHistograms(std::string hname, int NBins, float lower_bound, float upper_bound);
     //Booking of TProfile
-    void BookProfile(std::string hname, int NBins, int lower_bound, int upper_bound);
+    void BookProfile(std::string hname, int NBins, float lower_bound, float upper_bound);
 
     //Cosmetics for axis
     void SetAxis(std::string type, std::string x_axis, std::string y_axis);
