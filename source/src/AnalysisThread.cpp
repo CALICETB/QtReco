@@ -1478,7 +1478,7 @@ void AnalysisThread::Shower()
   booker->Book1DHistograms("MeanR", 50, -10/MoliereRadius, 400/MoliereRadius);
   //Center of gravity in X versus Center of gravity in Y
 //  booker->Book2DHistograms("MeanX_vs_MeanY", 13, -360, 360);
-  booker->Book2DHistograms("MeanX_vs_MeanY", 36, -180, 180, 36, -180, 180);
+  booker->Book2DHistograms("MeanX_vs_MeanY", 36, -180, 180);
   //Shower radius versus center of gravity in Z
   //booker->Book2DHistograms("MeanR vs MeanZ", 400, 0, 800);
 
