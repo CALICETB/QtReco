@@ -989,16 +989,16 @@ void AnalysisThread::EnergyCell()
     }
 
   //Booking of histogram for all layers
-  DMAHCALBooker *booker = new DMAHCALBooker("EnergyperLayer");
+  DMAHCALBooker *booker = new DMAHCALBooker("HitenergyPerLayer");
 
-  std::string hname = "Energy_Layer_";
+  std::string hname = "Hitenergy_Layer_";
   booker->Book1DHistograms(hname, nLayer, 80, -0.5, 4);
   booker->SetAxis("1D", "Energy [MIP]", "# Entries");
 
   //Create TList and get histograms
   TList *m_histoList = new TList();
   m_histoList = booker->GetObjects("1D");
-  m_histoList->SetName("EnergyperLayer List");
+  m_histoList->SetName("HitenergyPerLayer List");
 
   TIter next(m_histoList);
   TObject *obj;
@@ -1013,28 +1013,28 @@ void AnalysisThread::EnergyCell()
 
   std::map<int, std::map<int, TH1F*> > pHistoCell;
 
-  //Loop over roofile
+  //Loop over rootfile
   for(int n = 0; n < tree->GetEntries(); n++)
     {
       tree->GetEntry(n);
       m_maxevents = std::max(m_maxevents, eventNumber);
 
-      //T0 criteria
-      int nT0 = NumberOfT0(ahc_hitI, ahc_hitJ,  ahc_hitK, ahc_hitEnergy, ahc_hitTime, ahc_nHits);
-      if (nT0 < nT0s) continue;
-
       //Cut on number of hits
       if(ahc_nHits < nMinHits) continue;
       if(ahc_nHits > nMaxHits) continue;
+
+      //T0 criteria
+      int nT0 = NumberOfT0(ahc_hitI, ahc_hitJ,  ahc_hitK, ahc_hitEnergy, ahc_hitTime, ahc_nHits);
+      if (nT0 < nT0s) continue;
 
       for(int i = 0; i < ahc_nHits; i++)
 	{
 	  bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
 	  if (isT0channel) continue;
 
-	  float ampl = ahc_hitEnergy[i];
 	  if(ahc_hitK[i] > nLayer) continue;
 
+	  float ampl = ahc_hitEnergy[i];
 	  if(ampl < 0.5) continue;
 
 	  //Fill AHCAL histos
@@ -1100,16 +1100,16 @@ void AnalysisThread::EnergyCell()
   m_dirName += m_runNumber;
 
   pArchive->MakeRoot(m_dirName);
-  pArchive->mkdir("EnergyPerLayer");
+  pArchive->mkdir("HitenergyPerLayer");
   pArchive->WriteElement(m_histoList);
-  pArchive->mkdir("EnergyPerCell");
+  pArchive->mkdir("HitenergyPerCell");
   pArchive->WriteElement(m_cellHisto);
   pArchive->close();
   mutex.unlock();
 
   m_time = GetElapsedTime()/1000.;
 
-  emit log("DEBUG", QString("EnergyPerLayer check done : Treated %1 events in %2 secs").arg(QString::number(m_maxevents), QString::number(m_time)));
+  emit log("DEBUG", QString("HitenergyPerLayer check done : Treated %1 events in %2 secs").arg(QString::number(m_maxevents), QString::number(m_time)));
   booker->deleteLater();
   delete m_histoList;
   delete tree;
