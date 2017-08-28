@@ -86,7 +86,7 @@ void DMAHCALBooker::BookTGraph(int npoint, std::string tname)
 
 //-----------------------------------------------------------------------------------------------
 
-void DMAHCALBooker::BookProfile(std::string hname, int NBins, int lower_bound, int upper_bound)
+void DMAHCALBooker::BookProfile(std::string hname, int NBins, float lower_bound, float upper_bound)
 {
     TProfile *hProf;
     TString name = hname;
