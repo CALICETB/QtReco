@@ -1465,7 +1465,7 @@ void AnalysisThread::Shower()
     MoliereRadius = 1.71*10; //mm
 
   //Energy Profile
-  booker->BookProfile("Profile_EnergyPerLayer", nLayer, 0.5, nLayer+0.5);
+  booker->BookProfile("Profile_MeanEnergyPerLayer", nLayer, 0.5, nLayer+0.5);
   //Center of gravity in X
 //  booker->Book1DHistograms("MeanX", 360, -360, 360);
   booker->Book1DHistograms("CenterOfGravity_X", 360, -180, 180);
@@ -1836,7 +1836,7 @@ void AnalysisThread::HitMap()
       TString hname = "Map_Layer";
       hname += ilayer+1;
       TString htitle = "Transverse shower profile layer ";
-      hname += ilayer+1;
+      htitle += ilayer+1;
 
       //SPECIFIC TO CERN May 2017
       pHisto[ilayer] = new TH2I(hname, htitle, 12, 0.5, 12.5, 12, 0.5, 12.5);
