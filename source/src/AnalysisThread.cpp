@@ -1053,8 +1053,6 @@ void AnalysisThread::EnergyCell()
              }
           emit log("DEBUG", QString("N neighbours %1 ").arg(QString::number(nneighbour)));
 
-          cout << "N neighbours  " << nneighbour << endl;
-
 	  if (nneighbour < 4) pHisto[ahc_hitK[i]-1]->Fill(ampl);
 
 	  int ChipChn = GetChipChn(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
