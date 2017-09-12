@@ -1064,7 +1064,7 @@ void AnalysisThread::EnergyCell()
 
               if ( (ahc_hitI[i]-ahc_hitI[j]>=-1) && (ahc_hitI[i]-ahc_hitI[j]<=1) &&
                    (ahc_hitJ[i]-ahc_hitJ[j]>=-1) && (ahc_hitJ[i]-ahc_hitJ[j]<=1) &&
-                   ((ahc_hitK[i]-ahc_hitK[j]==0) ) nneighbour_ij++;
+                   (ahc_hitK[i]-ahc_hitK[j]==0) ) nneighbour_ij++;
              }
 //          emit log("DEBUG", QString("N neighbours %1 ").arg(QString::number(nneighbour)));
 
