@@ -1047,9 +1047,9 @@ void AnalysisThread::EnergyCell()
 	      if (ahc_hitK[j] > nLayer) continue;
               if (ahc_hitEnergy[j]<0.5) continue;
 
-              if ( (ahc_hitI[i]-ahc_hitI[j]>-1) && (ahc_hitI[i]-ahc_hitI[j]<1) &&
-                   (ahc_hitJ[i]-ahc_hitJ[j]>-1) && (ahc_hitJ[i]-ahc_hitJ[j]<1) &&
-                   (ahc_hitK[i]-ahc_hitK[j]>-1) && (ahc_hitK[i]-ahc_hitK[j]<1) ) nneighbour++;
+              if ( (ahc_hitI[i]-ahc_hitI[j]>-2) && (ahc_hitI[i]-ahc_hitI[j]<2) &&
+                   (ahc_hitJ[i]-ahc_hitJ[j]>-2) && (ahc_hitJ[i]-ahc_hitJ[j]<2) &&
+                   (ahc_hitK[i]-ahc_hitK[j]>-2) && (ahc_hitK[i]-ahc_hitK[j]<2) ) nneighbour++;
              }
           emit log("DEBUG", QString("N neighbours %1 ").arg(QString::number(nneighbour)));
 
