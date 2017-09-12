@@ -1051,7 +1051,7 @@ void AnalysisThread::EnergyCell()
                    (ahc_hitJ[i]-ahc_hitJ[j]>-2) && (ahc_hitJ[i]-ahc_hitJ[j]<2) &&
                    (ahc_hitK[i]-ahc_hitK[j]>-2) && (ahc_hitK[i]-ahc_hitK[j]<2) ) nneighbour++;
              }
-          emit log("DEBUG", QString("N neighbours %1 ").arg(QString::number(nneighbour)));
+//          emit log("DEBUG", QString("N neighbours %1 ").arg(QString::number(nneighbour)));
 
 	  if (nneighbour < 4) pHisto[ahc_hitK[i]-1]->Fill(ampl);
 
