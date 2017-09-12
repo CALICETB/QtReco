@@ -1039,9 +1039,8 @@ void AnalysisThread::EnergyCell()
 
 	  //Fill AHCAL histos
 // very simple MIP selection: check number of hits in neighbouring channels
-          int nneighbour=0;
-          int totaldifference_i = 0;
-          int totaldifference_j = 0;
+          int nneighbour_k=0;
+          int nneighbour_ij = 0;
 
           for(int j = 0; j < ahc_nHits; j++)
 	     {
@@ -1050,24 +1049,33 @@ void AnalysisThread::EnergyCell()
 	      if (ahc_hitK[j] > nLayer) continue;
               if (ahc_hitEnergy[j]<0.5) continue;
 
-              if ( (ahc_hitI[i]-ahc_hitI[j]>-2) && (ahc_hitI[i]-ahc_hitI[j]<2) &&
-                   (ahc_hitJ[i]-ahc_hitJ[j]>-2) && (ahc_hitJ[i]-ahc_hitJ[j]<2) &&
-                   ((ahc_hitK[i]-ahc_hitK[j]==-1) || (ahc_hitK[i]-ahc_hitK[j]==1)) ) 
-                { 
-                   nneighbour++;
-                   totaldifference_i += (ahc_hitI[i]-ahc_hitI[j]);
-                   totaldifference_j += (ahc_hitJ[i]-ahc_hitJ[j]);
-                }
+//              if ( (ahc_hitI[i]-ahc_hitI[j]>-2) && (ahc_hitI[i]-ahc_hitI[j]<2) &&
+//                   (ahc_hitJ[i]-ahc_hitJ[j]>-2) && (ahc_hitJ[i]-ahc_hitJ[j]<2) &&
+//                   ((ahc_hitK[i]-ahc_hitK[j]==-1) || (ahc_hitK[i]-ahc_hitK[j]==1)) ) 
+//                { 
+//                   nneighbour++;
+//                   totaldifference_i += (ahc_hitI[i]-ahc_hitI[j]);
+//                   totaldifference_j += (ahc_hitJ[i]-ahc_hitJ[j]);
+//                }
 
-//              if ( (ahc_hitI[i]-ahc_hitI[j]==0) && 
-//                   (ahc_hitJ[i]-ahc_hitJ[j]==0) && 
-//                   ((ahc_hitK[i]-ahc_hitK[j]==-1) || (ahc_hitK[i]-ahc_hitK[j]==1)) ) nneighbour++;
+              if ( (ahc_hitI[i]-ahc_hitI[j]==0) && 
+                   (ahc_hitJ[i]-ahc_hitJ[j]==0) && 
+                   ((ahc_hitK[i]-ahc_hitK[j]==-1) || (ahc_hitK[i]-ahc_hitK[j]==1)) ) nneighbour_k++;
+
+              if ( (ahc_hitI[i]-ahc_hitI[j]>=-1) && (ahc_hitI[i]-ahc_hitI[j]<=1) &&
+                   (ahc_hitJ[i]-ahc_hitJ[j]>=-1) && (ahc_hitJ[i]-ahc_hitJ[j]<=1) &&
+                   ((ahc_hitK[i]-ahc_hitK[j]==0) ) nneighbour_ij++;
              }
 //          emit log("DEBUG", QString("N neighbours %1 ").arg(QString::number(nneighbour)));
 
-	  if ( ((nneighbour==2)&&(totaldifference_i==0)&&(totaldifference_j==0)) ||
-               ((nneighbour==1)&&(ahc_hitK[i]==1)) ||
-               ((nneighbour==1)&&(ahc_hitK[i]==nLayer)) ) pHisto[ahc_hitK[i]-1]->Fill(ampl);
+//	  if ( ((nneighbour==2)&&(totaldifference_i==0)&&(totaldifference_j==0)) ||
+//               ((nneighbour==1)&&(ahc_hitK[i]==1)) ||
+//               ((nneighbour==1)&&(ahc_hitK[i]==nLayer)) ) pHisto[ahc_hitK[i]-1]->Fill(ampl);
+
+	  if ( ((nneighbour_k==2)&&(nneighbour_ij<=1)) ||
+               ((nneighbour_k==1)&&(nneighbour_ij<=1)&&(ahc_hitK[i]==1)) ||
+               ((nneighbour_k==1)&&(nneighbour_ij<=1)&&(ahc_hitK[i]==nLayer)) ) 
+             pHisto[ahc_hitK[i]-1]->Fill(ampl);
 
 	  int ChipChn = GetChipChn(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
 
