@@ -1049,11 +1049,11 @@ void AnalysisThread::EnergyCell()
 
               if ( (ahc_hitI[i]-ahc_hitI[j]>-2) && (ahc_hitI[i]-ahc_hitI[j]<2) &&
                    (ahc_hitJ[i]-ahc_hitJ[j]>-2) && (ahc_hitJ[i]-ahc_hitJ[j]<2) &&
-                   (ahc_hitK[i]-ahc_hitK[j]>-2) && (ahc_hitK[i]-ahc_hitK[j]<2) ) nneighbour++;
+                   ((ahc_hitK[i]-ahc_hitK[j]==-1) || (ahc_hitK[i]-ahc_hitK[j]==1)) ) nneighbour++;
              }
 //          emit log("DEBUG", QString("N neighbours %1 ").arg(QString::number(nneighbour)));
 
-	  if (nneighbour < 4) pHisto[ahc_hitK[i]-1]->Fill(ampl);
+	  if (nneighbour==2) pHisto[ahc_hitK[i]-1]->Fill(ampl);
 
 	  int ChipChn = GetChipChn(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
 
