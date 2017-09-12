@@ -1046,6 +1046,7 @@ void AnalysisThread::EnergyCell()
               if (isT0(ahc_hitI[j], ahc_hitJ[j], ahc_hitK[j])) continue;
 	      if (ahc_hitK[j] > nLayer) continue;
               if (ahc_hitEnergy[j]<0.5) continue;
+              if (ahc_hitEnergy[j]>4.0) continue;
 
               if ( (ahc_hitI[i]-ahc_hitI[j]>-2) && (ahc_hitI[i]-ahc_hitI[j]<2) &&
                    (ahc_hitJ[i]-ahc_hitJ[j]>-2) && (ahc_hitJ[i]-ahc_hitJ[j]<2) &&
