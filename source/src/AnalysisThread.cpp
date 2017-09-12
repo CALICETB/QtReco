@@ -1088,7 +1088,11 @@ void AnalysisThread::EnergyCell()
 	      pHistoCell[ahc_hitK[i]-1][ChipChn] = new TH1F(histoname, histoname, 80, -0.5, 4);
 	    }
 
-	  if (nneighbour < 4) pHistoCell[ahc_hitK[i]-1][ChipChn]->Fill(ampl);
+//	  if (nneighbour < 4) pHistoCell[ahc_hitK[i]-1][ChipChn]->Fill(ampl);
+	  if ( ((nneighbour_k==2)&&(nneighbour_ij<=1)) ||
+               ((nneighbour_k==1)&&(nneighbour_ij<=1)&&(ahc_hitK[i]==1)) ||
+               ((nneighbour_k==1)&&(nneighbour_ij<=1)&&(ahc_hitK[i]==nLayer)) ) 
+             pHistoCell[ahc_hitK[i]-1][ChipChn]->Fill(ampl);
 
 	}
 
