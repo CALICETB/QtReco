@@ -1051,6 +1051,9 @@ void AnalysisThread::EnergyCell()
                    (ahc_hitJ[i]-ahc_hitJ[j]>-1) && (ahc_hitJ[i]-ahc_hitJ[j]<1) &&
                    (ahc_hitK[i]-ahc_hitK[j]>-1) && (ahc_hitK[i]-ahc_hitK[j]<1) ) nneighbour++;
              }
+          emit log("DEBUG", QString("N neighbours %1 ").arg(QString::number(nneighbour)));
+
+          cout << "N neighbours  " << nneighbour << endl;
 
 	  if (nneighbour < 4) pHisto[ahc_hitK[i]-1]->Fill(ampl);
 
@@ -1065,7 +1068,7 @@ void AnalysisThread::EnergyCell()
 	      pHistoCell[ahc_hitK[i]-1][ChipChn] = new TH1F(histoname, histoname, 80, -0.5, 4);
 	    }
 
-	  pHistoCell[ahc_hitK[i]-1][ChipChn]->Fill(ampl);
+	  if (nneighbour < 4) pHistoCell[ahc_hitK[i]-1][ChipChn]->Fill(ampl);
 
 	}
 
