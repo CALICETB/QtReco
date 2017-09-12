@@ -903,13 +903,13 @@ void AnalysisThread::Esum()
 //-----------------------------------------------------------------------------------------------
 
 /*
- * Energy per Layer
- * Calculates the energy sum within one event and fill an histogram per layer
+ * Hit energy per Layer
+ * Plot all hit energies, fill an histogram per layer
  */
 
 void AnalysisThread::EnergyCell()
 {
-  emit log("MESSAGE", "Energy per Layer started");
+  emit log("MESSAGE", "Hit Energy per Layer started");
 
   //start timer
   timer.start();
@@ -1038,7 +1038,21 @@ void AnalysisThread::EnergyCell()
 	  if(ampl < 0.5) continue;
 
 	  //Fill AHCAL histos
-	  pHisto[ahc_hitK[i]-1]->Fill(ampl);
+// very simple MIP selection: check number of hits in neighbouring channels
+          int nneighbour=0;
+          for(int j = 0; j < ahc_nHits; j++)
+	     {
+	      if (j==i) continue;
+              if (isT0(ahc_hitI[j], ahc_hitJ[j], ahc_hitK[j])) continue;
+	      if (ahc_hitK[j] > nLayer) continue;
+              if (ahc_hitEnergy[j]<0.5) continue;
+
+              if ( (ahc_hitI[i]-ahc_hitI[j]>-1) && (ahc_hitI[i]-ahc_hitI[j]<1) &&
+                   (ahc_hitJ[i]-ahc_hitJ[j]>-1) && (ahc_hitJ[i]-ahc_hitJ[j]<1) &&
+                   (ahc_hitK[i]-ahc_hitK[j]>-1) && (ahc_hitK[i]-ahc_hitK[j]<1) ) nneighbour++;
+             }
+
+	  if (nneighbour < 4) pHisto[ahc_hitK[i]-1]->Fill(ampl);
 
 	  int ChipChn = GetChipChn(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
 
