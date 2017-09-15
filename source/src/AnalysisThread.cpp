@@ -1245,7 +1245,7 @@ void AnalysisThread::Hits()
   booker->BookProfile("NProf_0.25MIP", nLayer+1, -0.5, nLayer+0.5);
   booker->BookProfile("NProf_0.50MIP", nLayer+1, -0.5, nLayer+0.5);
 
-  booker->Book1DHistograms("NHits_0.5MIP_Layer", nLayer, 50, -0.5, 50.5);
+  booker->Book1DHistograms("NHits_0.5MIP_Layer", nLayer, 51, -0.5, 50.5);
 
   //Create TProfile list
   TList *m_profileList = new TList();
