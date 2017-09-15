@@ -59,7 +59,7 @@
     <!-- Cut on Min Number of Hits in Event -->
     <parameter name="NMinHits" value="3"/>
     <!-- Cut on Max Number of Hits in Event -->
-    <parameter name="NMaxHits" value="10000"/>
+    <parameter name="NMaxHits" value="9000"/>
   </Analysis>
 
 </DMAHCAL>
