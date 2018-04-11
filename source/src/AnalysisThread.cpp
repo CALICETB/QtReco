@@ -85,7 +85,7 @@ bool AnalysisThread::MakeMapping()
 {
   std::string FILE = m_IJKMapName;
 
-  ifstream fIn;
+  std::ifstream fIn;
   std::string line;
   fIn.open(FILE.c_str());
 
