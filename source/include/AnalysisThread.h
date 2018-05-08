@@ -43,12 +43,15 @@ signals:
 protected:
     //Each Method is here for analysis
     //T0 analysis
-    void T0_Correlation();
-    void T0_Difference();
-    void T0_Sum();
+    // void T0_Correlation();
+    // void T0_Difference();
+    // void T0_Sum();
+    //Hit Time analysis
+    void HitTime();
     //Energy analysis
     void Esum();
-    void EnergyCell();
+    //void EnergyCell();
+    void EnergyChannel();
     //Hit/noise analysis
     void Hits();
     //Shower analysis
