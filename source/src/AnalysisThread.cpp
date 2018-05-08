@@ -13,7 +13,9 @@
 #include "TSystem.h"
 
 #include <sstream>
+#include <iostream>
 #include <fstream>
+#include <tuple>
 #include <map>
 #include <algorithm>
 
@@ -63,14 +65,16 @@ void AnalysisThread::run()
     }
 
   //Do analysis
-  if(nT0s > 0)
+  /*if(nT0s > 0)
     {
       T0_Correlation();
       T0_Difference();
       T0_Sum();
-    }
+      }*/
   Esum();
-  EnergyCell();
+  //EnergyCell();
+  EnergyChannel();
+  HitTime();
   Hits();
   Shower();
   HitMap();
@@ -243,7 +247,7 @@ int AnalysisThread::EstimateMIP(int layer)
  * Represent the correlation of T0s/Cherenkov within the same layer
  */
 
-void AnalysisThread::T0_Correlation()
+/*void AnalysisThread::T0_Correlation()
 {
   emit log("MESSAGE", "T0 Correlation started");
 
@@ -380,7 +384,7 @@ void AnalysisThread::T0_Correlation()
 
   delete m_histoList;
   delete tree;
-}
+}*/
 
 //-----------------------------------------------------------------------------------------------
 
@@ -389,7 +393,7 @@ void AnalysisThread::T0_Correlation()
  * Represent the difference of T0s/Cherenkov within the same layer
  */
 
-void AnalysisThread::T0_Difference()
+ /*void AnalysisThread::T0_Difference()
 {
   emit log("MESSAGE", "T0 Difference started");
 
@@ -525,7 +529,7 @@ void AnalysisThread::T0_Difference()
 
   delete m_histoList;
   delete tree;
-}
+}*/
 
 //-----------------------------------------------------------------------------------------------
 
@@ -534,7 +538,7 @@ void AnalysisThread::T0_Difference()
  * Represent the correlation of all the T0s against one of them
  */
 
-void AnalysisThread::T0_Sum()
+  /*void AnalysisThread::T0_Sum()
 {
   emit log("MESSAGE", "T0 Sum started");
 
@@ -677,13 +681,162 @@ void AnalysisThread::T0_Sum()
 
   delete m_histoList;
   delete tree;
+}*/
+
+//-----------------------------------------------------------------------------------------------
+
+/*
+ * HitTime
+ * Creates histogram of hit times for all hits
+ */
+
+void AnalysisThread::HitTime()
+{
+  emit log("MESSAGE", "HitTime started");
+
+  //start timer
+  timer.start();
+  int m_maxevents = 0;
+  double m_time = 0; 
+
+  //Open rootfile
+  pAnalysis->OpenTFile(m_Rootfile, "READ");
+
+  if(!pAnalysis->isOpened())
+    {
+      emit log("ERROR", QString("Can't open TFile : %1").arg(QString::fromStdString(m_Rootfile)));
+      return;
+    }
+
+  //Declare TTree
+  TTree *tree = (TTree*)pAnalysis->GetTree("bigtree"); 
+
+  //Declare variables
+  //HBU
+  Int_t runNumber;
+  Int_t eventNumber;
+  int ahc_hitI[MAXCELL];
+  int ahc_hitJ[MAXCELL];
+  int ahc_hitK[MAXCELL];
+  Float_t ahc_hitEnergy[MAXCELL];
+  Float_t ahc_hitTime[MAXCELL];
+  /*EBU
+  int emc_hitI[MAXCELL];
+  int emc_hitJ[MAXCELL];
+  int emc_hitK[MAXCELL];
+  Float_t emc_hitEnergy[MAXCELL];
+  Float_t emc_hitTime[MAXCELL];
+  //Number of hits in one event
+  Int_t emc_nHits;*/
+  Int_t ahc_nHits;
+
+  //Enable/disable branches
+  tree->SetBranchStatus("*", 0);
+  tree->SetBranchStatus("runNumber", 1);
+  tree->SetBranchStatus("eventNumber", 1);
+  tree->SetBranchStatus("ahc_nHits", 1);
+  tree->SetBranchStatus("ahc_hitI", 1);
+  tree->SetBranchStatus("ahc_hitJ", 1);
+  tree->SetBranchStatus("ahc_hitK", 1);
+  tree->SetBranchStatus("ahc_hitEnergy", 1);
+  tree->SetBranchStatus("ahc_hitTime", 1);
+
+  //Declare branches
+  tree->SetBranchAddress("runNumber", &runNumber);
+  tree->SetBranchAddress("eventNumber", &eventNumber);
+  tree->SetBranchAddress("ahc_nHits", &ahc_nHits);
+  tree->SetBranchAddress("ahc_hitI", &ahc_hitI);
+  tree->SetBranchAddress("ahc_hitJ", &ahc_hitJ);
+  tree->SetBranchAddress("ahc_hitK", &ahc_hitK);
+  tree->SetBranchAddress("ahc_hitEnergy", &ahc_hitEnergy);
+  tree->SetBranchAddress("ahc_hitTime", &ahc_hitTime);
+
+  //Booking of histogram
+  DMAHCALBooker *booker = new DMAHCALBooker("HitTime");
+  booker->Book1DHistograms("Hit_Time", 10000, -5000, 5000);
+  booker->SetAxis("1D", "Hit_Time [ns]", "# Entries");
+
+  //Create TList
+  TList *m_histoList = new TList();
+  m_histoList = booker->GetObjects("1D");
+  m_histoList->SetName("HitTime List");
+
+  float HitTime = 0;
+  //Loop over rootfile
+  for(int n = 0; n < tree->GetEntries(); n++)
+    {
+      tree->GetEntry(n);
+      //Reset Hit Time  at the beginning of event
+      HitTime = 0;
+
+      //case no hits
+      if(ahc_nHits == 0) continue;
+      m_maxevents = std::max(m_maxevents, eventNumber);
+
+      //Count number of T0s
+      int nT0 = NumberOfT0(ahc_hitI, ahc_hitJ,  ahc_hitK, ahc_hitEnergy, ahc_hitTime, ahc_nHits);
+      if (nT0 < nT0s) continue;
+
+      //Cut on number of Hits
+      if(ahc_nHits < nMinHits) continue;
+      if(ahc_nHits > nMaxHits) continue;
+
+      //Loop over the hits
+      for(int i = 0; i < ahc_nHits; i++)
+	{
+	  int layer = ahc_hitK[i];
+	  float time = ahc_hitTime[i];
+	  //if(layer > nLayer) continue;
+
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
+
+	  HitTime = time;
+
+	  //Fill Hit Time histogram
+	  TIter next(m_histoList);
+	  TObject *obj;
+
+	  while ((obj = next()))
+	  {
+	    if(obj->InheritsFrom("TH1"))
+	    {
+	      TH1F* pHisto = static_cast<TH1F*>(obj);
+	      pHisto->Fill(HitTime);
+	    }
+	  }
+	}
+    }
+
+
+  //Lock rootfile to write
+  mutex.lock();
+  pArchive->OpenTFile(m_ArchiveName, "UPDATE");
+  emit log("DEBUG", QString("Writing to Archive File : %1").arg(QString::fromStdString(m_ArchiveName)));
+
+  std::string m_dirName = "Run_";
+  m_dirName += m_runNumber;
+
+  pArchive->MakeRoot(m_dirName);
+  pArchive->mkdir("Hit_Time");
+  pArchive->WriteElement(m_histoList);
+  pArchive->close();
+  mutex.unlock();
+
+  m_time = GetElapsedTime()/1000.;
+
+  emit log("DEBUG", QString("HitTime done : Treated %1 events in %2 secs").arg(QString::number(m_maxevents), QString::number(m_time)));
+  booker->deleteLater();
+  delete m_histoList;
+  delete tree;
+ 
 }
 
 //-----------------------------------------------------------------------------------------------
 
 /*
  * Energy Sum
- * Calculates the energy sum within one event and fill an histogram
+ * Calculates the energy sum within one event and fill a histogram
  */
 
 void AnalysisThread::Esum()
@@ -718,14 +871,14 @@ void AnalysisThread::Esum()
   int ahc_hitK[MAXCELL];
   Float_t ahc_hitEnergy[MAXCELL];
   Float_t ahc_hitTime[MAXCELL];
-  //EBU
+  /*EBU
   int emc_hitI[MAXCELL];
   int emc_hitJ[MAXCELL];
   int emc_hitK[MAXCELL];
   Float_t emc_hitEnergy[MAXCELL];
   Float_t emc_hitTime[MAXCELL];
   //Number of hits in one event
-  Int_t emc_nHits;
+  Int_t emc_nHits;*/
   Int_t ahc_nHits;
 
   //Enable/disable branches
@@ -739,7 +892,7 @@ void AnalysisThread::Esum()
   tree->SetBranchStatus("ahc_hitEnergy", 1);
   tree->SetBranchStatus("ahc_hitTime", 1);
 
-  if(EBU)
+  /*if(EBU)
     {
       tree->SetBranchStatus("emc_nHits", 1);
       tree->SetBranchStatus("emc_hitI", 1);
@@ -747,7 +900,7 @@ void AnalysisThread::Esum()
       tree->SetBranchStatus("emc_hitK", 1);
       tree->SetBranchStatus("emc_hitEnergy", 1);
       tree->SetBranchStatus("emc_hitTime", 1);
-    }
+      }*/
 
   //Declare branches
   tree->SetBranchAddress("runNumber", &runNumber);
@@ -759,7 +912,7 @@ void AnalysisThread::Esum()
   tree->SetBranchAddress("ahc_hitEnergy", &ahc_hitEnergy);
   tree->SetBranchAddress("ahc_hitTime", &ahc_hitTime);
 
-  if(EBU)
+  /*if(EBU)
     {
       tree->SetBranchAddress("emc_nHits", &emc_nHits);
       tree->SetBranchAddress("emc_hitI", &emc_hitI);
@@ -767,7 +920,7 @@ void AnalysisThread::Esum()
       tree->SetBranchAddress("emc_hitK", &emc_hitK);
       tree->SetBranchAddress("emc_hitEnergy", &emc_hitEnergy);
       tree->SetBranchAddress("emc_hitTime", &emc_hitTime);
-    }
+      }*/
 
   //Booking of histogram
   DMAHCALBooker *booker = new DMAHCALBooker("Esum");
@@ -813,10 +966,10 @@ void AnalysisThread::Esum()
 	{
 	  int layer = ahc_hitK[i];
 	  float ampl = ahc_hitEnergy[i];
-	  if(layer > nLayer) continue;
+	  //if(layer > nLayer) continue;
 
-	  bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
-	  if (isT0channel) continue;
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
 
 	  if(MIP)
 	    {
@@ -835,13 +988,13 @@ void AnalysisThread::Esum()
 	}
 
       //EBU Handling
-      if(EBU)
+      /*if(EBU)
 	{
 	  for(int i = 0; i < emc_nHits; i++)
 	    {
 	      int layer = emc_hitK[i];
 	      float ampl = ahc_hitEnergy[i];
-	      if(layer >= nLayer) continue;
+	      //if(layer >= nLayer) continue;
 
 	      if(MIP)
 		{
@@ -859,7 +1012,7 @@ void AnalysisThread::Esum()
 		}
 
 	    }
-	}
+	    }*/
 
       //Fill Sum energy histogram
       if(SumEnergy != 0)
@@ -903,11 +1056,231 @@ void AnalysisThread::Esum()
 //-----------------------------------------------------------------------------------------------
 
 /*
+ * Energy per Channel
+ * Calculates the energy sum within one event and fills a histogram per single channel
+ */
+
+void AnalysisThread::EnergyChannel()
+{
+  emit log("MESSAGE", "Energy per Channel  started");
+
+  //start timer
+  timer.start();
+  int m_maxevents = 0;
+  double m_time = 0;
+
+  //open rootfile
+  pAnalysis->OpenTFile(m_Rootfile, "READ");
+
+  if(!pAnalysis->isOpened())
+    {
+      emit log("ERROR", QString("Can't open TFile : %1").arg(QString::fromStdString(m_Rootfile)));
+      return;
+    }
+	
+  //Declare TTree
+  TTree *tree = (TTree*)pAnalysis->GetTree("bigtree");
+  Int_t numberOfEvents = tree->GetEntries();
+
+  //Declare variable
+  //HBU
+  Int_t runNumber;
+  Int_t eventNumber;
+  int ahc_hitI[MAXCELL];
+  int ahc_hitJ[MAXCELL];
+  int ahc_hitK[MAXCELL];
+  Float_t ahc_hitEnergy[MAXCELL];
+  Float_t ahc_hitTime[MAXCELL];
+  /*EBU
+  int emc_hitI[MAXCELL];
+  int emc_hitJ[MAXCELL];
+  int emc_hitK[MAXCELL];
+  Float_t emc_hitEnergy[MAXCELL];
+  Float_t emc_hitTime[MAXCELL];
+  //Number of hits in an event
+  Int_t emc_nHits;*/
+  Int_t ahc_nHits;
+
+  //Enable/disable branches
+  tree->SetBranchStatus("*", 0);
+  tree->SetBranchStatus("runNumber", 1);
+  tree->SetBranchStatus("eventNumber", 1);
+  tree->SetBranchStatus("ahc_nHits", 1);
+  tree->SetBranchStatus("ahc_hitI", 1);
+  tree->SetBranchStatus("ahc_hitJ", 1);
+  tree->SetBranchStatus("ahc_hitK", 1);
+  tree->SetBranchStatus("ahc_hitEnergy", 1);
+  tree->SetBranchStatus("ahc_hitTime", 1);
+
+  /*if(EBU)
+    {
+      tree->SetBranchStatus("emc_nHits", 1);
+      tree->SetBranchStatus("emc_hitI", 1);
+      tree->SetBranchStatus("emc_hitJ", 1);
+      tree->SetBranchStatus("emc_hitK", 1);
+      tree->SetBranchStatus("emc_hitEnergy", 1);
+      tree->SetBranchStatus("emc_hitTime", 1);
+      }*/
+
+  //Declare branches
+  tree->SetBranchAddress("runNumber", &runNumber);
+  tree->SetBranchAddress("eventNumber", &eventNumber);
+  tree->SetBranchAddress("ahc_nHits", &ahc_nHits);
+  tree->SetBranchAddress("ahc_hitI", &ahc_hitI);
+  tree->SetBranchAddress("ahc_hitJ", &ahc_hitJ);
+  tree->SetBranchAddress("ahc_hitK", &ahc_hitK);
+  tree->SetBranchAddress("ahc_hitEnergy", &ahc_hitEnergy);
+  tree->SetBranchAddress("ahc_hitTime", &ahc_hitTime);
+
+  /*if(EBU)
+    {
+      tree->SetBranchAddress("emc_nHits", &emc_nHits);
+      tree->SetBranchAddress("emc_hitI", &emc_hitI);
+      tree->SetBranchAddress("emc_hitJ", &emc_hitJ);
+      tree->SetBranchAddress("emc_hitK", &emc_hitK);
+      tree->SetBranchAddress("emc_hitEnergy", &emc_hitEnergy);
+      tree->SetBranchAddress("emc_hitTime", &emc_hitTime);
+      }*/
+
+  //Booking of histogram for all layers
+  DMAHCALBooker *booker = new DMAHCALBooker("EnergyPerChannel");
+
+  std::vector<TProfile*> pProfile(nLayer);
+  std::vector<TGraph*> pErrorGraph(nLayer);
+  TList *m_energyProfileList = new TList();
+  m_energyProfileList->SetName("Profile Energy Channel List");
+  TList *m_rmsGraphList = new TList();
+  m_rmsGraphList->SetName("Graph RMS Channel List");
+
+  std::string name = "EnergyPerChannel_Layer";
+  for (int layerNumber = 1; layerNumber < nLayer+1; layerNumber++)
+    {
+      std::stringstream s;
+      s << layerNumber;
+      name += s.str();
+      Double_t min = 0.5 + 576*(layerNumber-1);
+      Double_t max = 576.5 + 576*(layerNumber-1); 
+      pProfile[layerNumber-1] = new TProfile(name.c_str(), name.c_str(), 576, min, max);
+      pProfile[layerNumber-1]->GetXaxis()->SetTitle("Channel number");
+      pProfile[layerNumber-1]->GetYaxis()->SetTitle("Energy [MIP]/Number of events");
+      pProfile[layerNumber-1]->BuildOptions(0,0,"s");
+      m_energyProfileList->Add(pProfile[layerNumber-1]);
+      name = "EnergyPerChannel_Layer";
+      pErrorGraph[layerNumber-1] = new TGraph(576);
+    }
+
+  //Loop over roofile
+  for(int n = 0; n < numberOfEvents; n++)
+    {
+      tree->GetEntry(n);
+      m_maxevents = std::max(m_maxevents, eventNumber);
+
+      //T0 criteria
+      int nT0 = NumberOfT0(ahc_hitI, ahc_hitJ,  ahc_hitK, ahc_hitEnergy, ahc_hitTime, ahc_nHits);
+      if (nT0 < nT0s) continue;
+
+      //Cut on number of hits
+      if(ahc_nHits < nMinHits) continue;
+      if(ahc_nHits > nMaxHits) continue;
+
+      for(int i = 0; i < ahc_nHits; i++)
+	{
+	  int layerID = ahc_hitK[i];
+	  if(layerID > nLayer) continue;
+	  int ChpChn = GetChipChn(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]); 
+	  int chipID = ChpChn/100;
+	  int channelID = ChpChn%100;
+	  int channel = (layerID-1)*576+chipID*36+channelID;
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
+	  float ampl = ahc_hitEnergy[i];
+
+	  if(MIP)
+	    {
+	      if(ampl > m_MIPcut)
+		{
+		  pProfile[layerID-1]->Fill(channel+1, ampl, 1);
+		}
+	    }
+	  else
+	    {
+	      if(ampl > m_MIPcut*EstimateMIP(layerID))
+		{
+		  pProfile[layerID-1]->Fill(channel+1, ampl, 1);
+		}
+	    }
+	}
+    }
+
+  std::string name2 = "RMSPerChannel_Layer";
+  for(int number = 0; number < nLayer; number++)
+    {
+      for(int iChannel = 576*number; iChannel < 576*(number+1); iChannel++)
+	{
+	  pProfile[number]->SetBinEntries(iChannel+1-number*576,numberOfEvents);
+	  Double_t error = pProfile[number]->GetBinError(iChannel+1-number*576);
+	  pErrorGraph[number]->SetPoint(iChannel-number*576,iChannel+1,error);
+	}
+      std::stringstream s;
+      s << number+1;
+      name2 += s.str();
+      pErrorGraph[number]->SetNameTitle(name2.c_str(), name2.c_str());
+      pErrorGraph[number]->SetMarkerStyle(20);
+      pErrorGraph[number]->SetMarkerSize(0.7);
+      pErrorGraph[number]->SetMarkerColor(1);
+      pErrorGraph[number]->SetLineColor(0);
+      pErrorGraph[number]->GetXaxis()->SetTitle("Channel number");
+      pErrorGraph[number]->GetYaxis()->SetTitle("RMS [MIP]");
+      pErrorGraph[number]->GetXaxis()->SetRangeUser(number*576,577+number*576);
+      m_rmsGraphList->Add(pErrorGraph[number]);
+      name2 = "RMSPerChannel_Layer";
+      pProfile[number]->BuildOptions(0,0,"");      
+    }
+
+  //Lock rootfile to write
+  mutex.lock();
+  pArchive->OpenTFile(m_ArchiveName, "UPDATE");
+  emit log("DEBUG", QString("Writing to Archive File : %1").arg(QString::fromStdString(m_ArchiveName)));
+
+  std::string m_dirName = "Run_";
+  m_dirName += m_runNumber;
+
+  pArchive->MakeRoot(m_dirName);
+  pArchive->mkdir("EnergyPerChannel");
+  pArchive->WriteElement(m_energyProfileList);
+  pArchive->mkdir("RMSPerChannel");
+  pArchive->WriteElement(m_rmsGraphList);
+  pArchive->close();
+  mutex.unlock();
+
+  m_time = GetElapsedTime()/1000.;
+
+  emit log("DEBUG", QString("Energy Per Channel check done : Treated %1 events in %2 secs").arg(QString::number(m_maxevents), QString::number(m_time)));
+
+  booker->deleteLater();
+  //delete m_profileList;
+  delete m_energyProfileList;
+  delete m_rmsGraphList;
+  for(int layerNumber = 0; layerNumber < nLayer; layerNumber++)
+    {
+      delete pProfile[layerNumber];
+      delete pErrorGraph[layerNumber];
+    }
+  delete tree;
+}
+
+
+
+
+
+//-----------------------------------------------------------------------------------------------
+
+/*
  * Energy per Layer
  * Calculates the energy sum within one event and fill an histogram per layer
  */
 
-void AnalysisThread::EnergyCell()
+/*void AnalysisThread::EnergyCell()
 {
   emit log("MESSAGE", "Energy per Layer started");
 
@@ -1029,8 +1402,8 @@ void AnalysisThread::EnergyCell()
 
       for(int i = 0; i < ahc_nHits; i++)
 	{
-	  bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
-	  if (isT0channel) continue;
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
 
 	  float ampl = ahc_hitEnergy[i];
 	  if(ahc_hitK[i] > nLayer) continue;
@@ -1038,7 +1411,7 @@ void AnalysisThread::EnergyCell()
 	  if(ampl < 0.5) continue;
 
 	  //Fill AHCAL histos
-	  pHisto[ahc_hitK[i]-1]->Fill(ampl);
+	   pHisto[ahc_hitK[i]-1]->Fill(ampl);
 
 	  int ChipChn = GetChipChn(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
 
@@ -1053,32 +1426,6 @@ void AnalysisThread::EnergyCell()
 
 	  pHistoCell[ahc_hitK[i]-1][ChipChn]->Fill(ampl);
 
-	}
-
-      if(EBU)
-	{
-	  for(int i = 0; i < emc_nHits; i++)
-	    {
-	      if(emc_hitK[i] > nLayer) continue;
-
-	      //Fill EBU histos
-	      if(emc_hitEnergy[i] < 0.5) continue;
-
-	      pHisto[emc_hitK[i]-1]->Fill(emc_hitEnergy[i]);
-
-	      int ChipChn = GetChipChn(emc_hitI[i], emc_hitJ[i], emc_hitK[i]);
-
-	      if(pHistoCell[emc_hitK[i]-1].count(ChipChn) == 0)
-		{
-		  TString histoname = "SpectrumLayer_";
-		  histoname += emc_hitK[i];
-		  histoname += "_ChipChn";
-		  histoname += ChipChn;
-		  pHistoCell[emc_hitK[i]-1][ChipChn] = new TH1F(histoname, histoname, 80, -0.5, 4);
-		}
-
-	      pHistoCell[emc_hitK[i]-1][ChipChn]->Fill(emc_hitEnergy[i]);
-	    }
 	}
     }
 
@@ -1117,7 +1464,7 @@ void AnalysisThread::EnergyCell()
   pHistoCell.clear();
   for(int i = 0; i < nLayer; i++)
     delete pHisto[i];
-}
+}*/
 
 //-----------------------------------------------------------------------------------------------
 
@@ -1157,13 +1504,13 @@ void AnalysisThread::Hits()
   Float_t ahc_hitEnergy[MAXCELL];
   Float_t ahc_hitTime[MAXCELL];
   //EBU
-  int emc_hitI[MAXCELL];
+  /*int emc_hitI[MAXCELL];
   int emc_hitJ[MAXCELL];
   int emc_hitK[MAXCELL];
   Float_t emc_hitEnergy[MAXCELL];
   Float_t emc_hitTime[MAXCELL];
   //Number of hits in one event
-  Int_t emc_nHits;
+  Int_t emc_nHits;*/
   Int_t ahc_nHits;
 
   //Enable/disable branches
@@ -1177,7 +1524,7 @@ void AnalysisThread::Hits()
   tree->SetBranchStatus("ahc_hitEnergy", 1);
   tree->SetBranchStatus("ahc_hitTime", 1);
 
-  if(EBU)
+  /*if(EBU)
     {
       tree->SetBranchStatus("emc_nHits", 1);
       tree->SetBranchStatus("emc_hitI", 1);
@@ -1185,7 +1532,7 @@ void AnalysisThread::Hits()
       tree->SetBranchStatus("emc_hitK", 1);
       tree->SetBranchStatus("emc_hitEnergy", 1);
       tree->SetBranchStatus("emc_hitTime", 1);
-    }
+      }*/
 
   //Declare branches
   tree->SetBranchAddress("runNumber", &runNumber);
@@ -1197,7 +1544,7 @@ void AnalysisThread::Hits()
   tree->SetBranchAddress("ahc_hitEnergy", &ahc_hitEnergy);
   tree->SetBranchAddress("ahc_hitTime", &ahc_hitTime);
 
-  if(EBU)
+  /*if(EBU)
     {
       tree->SetBranchAddress("emc_nHits", &emc_nHits);
       tree->SetBranchAddress("emc_hitI", &emc_hitI);
@@ -1205,7 +1552,7 @@ void AnalysisThread::Hits()
       tree->SetBranchAddress("emc_hitK", &emc_hitK);
       tree->SetBranchAddress("emc_hitEnergy", &emc_hitEnergy);
       tree->SetBranchAddress("emc_hitTime", &emc_hitTime);
-    }
+      }*/
 
   //Booking of histograms (TProfile per layer)
   DMAHCALBooker *booker = new DMAHCALBooker("Hits");
@@ -1245,8 +1592,8 @@ void AnalysisThread::Hits()
 	  float ampl_ahc = ahc_hitEnergy[i];
 	  int layer = ahc_hitK[i];
 
-	  bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
-	  if (isT0channel) continue;
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
 
 	  if(ahc_hitK[i] > nLayer) continue;
 
@@ -1266,7 +1613,7 @@ void AnalysisThread::Hits()
 	    }
 	}
 
-      if(EBU)
+      /*if(EBU)
 	{
 	  for(int i = 0; i < emc_nHits; i++)
 	    {
@@ -1290,7 +1637,7 @@ void AnalysisThread::Hits()
 		    nhitover50[layer-1]++;
 		}
 	    }
-	}
+	    }*/
 
       TIter next(m_HistoList);
       TObject *obj;
@@ -1313,8 +1660,8 @@ void AnalysisThread::Hits()
 	  if(strcmp(obj->GetName(), "NProf_0.25MIP") == 0)
 	    {
 	      TProfile *prof = static_cast<TProfile*>(obj);
-	      prof->GetXaxis()->SetTitle("Number of Hits over 0.25 MIPs");
-	      prof->GetYaxis()->SetTitle("<NHits>");
+	      prof->GetXaxis()->SetTitle("Layer number");
+	      prof->GetYaxis()->SetTitle("Number of Hits over 0.25 MIPs");
 	      for(int iLayer = 0; iLayer < nLayer; iLayer++)
 		{
 		  prof->Fill(iLayer+1, nhitover25[iLayer], 1);
@@ -1323,8 +1670,8 @@ void AnalysisThread::Hits()
 	  if(strcmp(obj->GetName(), "NProf_0.50MIP") == 0)
 	    {
 	      TProfile *prof2 = static_cast<TProfile*>(obj);
-	      prof2->GetXaxis()->SetTitle("Number of Hits over 0.50 MIPs");
-	      prof2->GetYaxis()->SetTitle("<NHits>");
+	      prof2->GetXaxis()->SetTitle("Layer Number");
+	      prof2->GetYaxis()->SetTitle("Number of Hits over 0.50 MIPs");
 	      for(int iLayer = 0; iLayer < nLayer; iLayer++)
 		{
 		  prof2->Fill(iLayer+1, nhitover50[iLayer], 1);
@@ -1363,7 +1710,7 @@ void AnalysisThread::Hits()
 
 /*
  * Shower Module
- * Create divers variables inherent for shower devellopement and beam characteristics
+ * Create divers variables inherent for shower development and beam characteristics
  */
 
 void AnalysisThread::Shower()
@@ -1399,14 +1746,14 @@ void AnalysisThread::Shower()
   Float_t ahc_hitEnergy[MAXCELL];
   Float_t ahc_hitTime[MAXCELL];
   //EBU
-  int emc_hitI[MAXCELL];
+  /*int emc_hitI[MAXCELL];
   int emc_hitJ[MAXCELL];
   int emc_hitK[MAXCELL];
   Float_t emc_hitPos[MAXCELL][3];
   Float_t emc_hitEnergy[MAXCELL];
   Float_t emc_hitTime[MAXCELL];
   //Number of hits in one event
-  Int_t emc_nHits;
+  Int_t emc_nHits;*/
   Int_t ahc_nHits;
 
   //Enable/disable branches
@@ -1421,7 +1768,7 @@ void AnalysisThread::Shower()
   tree->SetBranchStatus("ahc_hitTime", 1);
   tree->SetBranchStatus("ahc_hitPos", 1);
 
-  if(EBU)
+  /*if(EBU)
     {
       tree->SetBranchStatus("emc_nHits", 1);
       tree->SetBranchStatus("emc_hitI", 1);
@@ -1430,7 +1777,7 @@ void AnalysisThread::Shower()
       tree->SetBranchStatus("emc_hitEnergy", 1);
       tree->SetBranchStatus("emc_hitTime", 1);
       tree->SetBranchStatus("emc_hitPos", 1);
-    }
+      }*/
 
   //Declare branches
   tree->SetBranchAddress("runNumber", &runNumber);
@@ -1443,7 +1790,7 @@ void AnalysisThread::Shower()
   tree->SetBranchAddress("ahc_hitTime", &ahc_hitTime);
   tree->SetBranchAddress("ahc_hitPos", &ahc_hitPos);
 
-  if(EBU)
+  /*if(EBU)
     {
       tree->SetBranchAddress("emc_nHits", &emc_nHits);
       tree->SetBranchAddress("emc_hitI", &emc_hitI);
@@ -1452,7 +1799,7 @@ void AnalysisThread::Shower()
       tree->SetBranchAddress("emc_hitEnergy", &emc_hitEnergy);
       tree->SetBranchAddress("emc_hitTime", &emc_hitTime);
       tree->SetBranchAddress("emc_hitPos", &emc_hitPos);
-    }
+      }*/
 
   //Booking of histograms
   DMAHCALBooker *booker = new DMAHCALBooker("Shower");
@@ -1475,7 +1822,7 @@ void AnalysisThread::Shower()
   //Shower radius
   booker->Book1DHistograms("MeanR", 50, -10/MoliereRadius, 400/MoliereRadius);
   //Center of gravity in X versus Center of gravity in Y
-  booker->Book2DHistograms("MeanX_vs_MeanY", 13, -360, 360);
+  booker->Book2DHistograms("MeanX_vs_MeanY", 24, -360, 360);
   //Shower radius versus center of gravity in Z
   //booker->Book2DHistograms("MeanR vs MeanZ", 400, 0, 800);
 
@@ -1528,8 +1875,8 @@ void AnalysisThread::Shower()
 	  int layer = ahc_hitK[i];
 	  if(ahc_hitK[i] > nLayer) continue;
 
-	  bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
-	  if (isT0channel) continue;
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
 	  float ampl = ahc_hitEnergy[i];
 
 	  if(MIP)
@@ -1558,7 +1905,7 @@ void AnalysisThread::Shower()
 		}
 	    }
 	}
-      if(EBU)
+      /*if(EBU)
 	{
 	  for(int i = 0; i < emc_nHits; i++)
 	    {
@@ -1589,7 +1936,7 @@ void AnalysisThread::Shower()
 		    }
 		}
 	    }
-	}
+	    }*/
 
       //Calculate COG in one event
       cogx = SumXE/SumE;
@@ -1602,8 +1949,8 @@ void AnalysisThread::Shower()
 	  int layer = ahc_hitK[i]-1;
 	  if(ahc_hitK[i] > nLayer) continue;
 
-	  bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
-	  if (isT0channel) continue;
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
 	  float ampl = ahc_hitEnergy[i];
 
 	  if(MIP)
@@ -1622,7 +1969,7 @@ void AnalysisThread::Shower()
 		}
 	    }
 	}
-      if(EBU)
+      /*if(EBU)
 	{
 	  for(int i = 0; i < emc_nHits; i++)
 	    {
@@ -1644,7 +1991,7 @@ void AnalysisThread::Shower()
 		    }
 		}
 	    }
-	}
+	    }*/
 
       //Calculate Radius for the event
       MeanR = SumRE/SumE;
@@ -1703,6 +2050,8 @@ void AnalysisThread::Shower()
 	  for(int iLayer = 0; iLayer < nLayer; iLayer++)
 	    {
 	      prof->Fill(iLayer+1, sumEnergy[iLayer], 1);
+	      prof->GetXaxis()->SetTitle("Layer Number");
+	      prof->GetYaxis()->SetTitle("Energy sum [MIP]/Number of Events");
 	    }
 	}
     }
@@ -1772,13 +2121,13 @@ void AnalysisThread::HitMap()
   Float_t ahc_hitEnergy[MAXCELL];
   Float_t ahc_hitTime[MAXCELL];
   //EBU
-  int emc_hitI[MAXCELL];
+  /*int emc_hitI[MAXCELL];
   int emc_hitJ[MAXCELL];
   int emc_hitK[MAXCELL];
   Float_t emc_hitEnergy[MAXCELL];
   Float_t emc_hitTime[MAXCELL];
   //Number of hits in one event
-  Int_t emc_nHits;
+  Int_t emc_nHits;*/
   Int_t ahc_nHits;
 
   //Enable/disable branches
@@ -1792,7 +2141,7 @@ void AnalysisThread::HitMap()
   tree->SetBranchStatus("ahc_hitEnergy", 1);
   tree->SetBranchStatus("ahc_hitTime", 1);
 
-  if(EBU)
+  /*if(EBU)
     {
       tree->SetBranchStatus("emc_nHits", 1);
       tree->SetBranchStatus("emc_hitI", 1);
@@ -1800,7 +2149,7 @@ void AnalysisThread::HitMap()
       tree->SetBranchStatus("emc_hitK", 1);
       tree->SetBranchStatus("emc_hitEnergy", 1);
       tree->SetBranchStatus("emc_hitTime", 1);
-    }
+      }*/
 
   //Declare branches
   tree->SetBranchAddress("runNumber", &runNumber);
@@ -1812,7 +2161,7 @@ void AnalysisThread::HitMap()
   tree->SetBranchAddress("ahc_hitEnergy", &ahc_hitEnergy);
   tree->SetBranchAddress("ahc_hitTime", &ahc_hitTime);
 
-  if(EBU)
+  /*if(EBU)
     {
       tree->SetBranchAddress("emc_nHits", &emc_nHits);
       tree->SetBranchAddress("emc_hitI", &emc_hitI);
@@ -1820,26 +2169,36 @@ void AnalysisThread::HitMap()
       tree->SetBranchAddress("emc_hitK", &emc_hitK);
       tree->SetBranchAddress("emc_hitEnergy", &emc_hitEnergy);
       tree->SetBranchAddress("emc_hitTime", &emc_hitTime);
-    }
+      }*/
 
   //Create histograms
   std::vector<TH2I*> pHisto(nLayer);
+  std::vector<TH2I*> pEnergyHisto(nLayer);
   for(int ilayer = 0; ilayer < nLayer; ilayer++)
     {
       TString hname = "Map_Layer";
       hname += ilayer+1;
 
+      TString henergyname = "Energy_Map_Layer";
+      henergyname += ilayer+1;
+
       //SPECIFIC TO DESY May 2016
       pHisto[ilayer] = new TH2I(hname, hname, 24, 0.5, 24.5, 24, 0.5, 24.5);
-
       pHisto[ilayer]->GetXaxis()->SetTitle("I");
       pHisto[ilayer]->GetYaxis()->SetTitle("J");
+      pHisto[ilayer]->SetStats(0);
+
+      pEnergyHisto[ilayer] = new TH2I(henergyname, henergyname, 24, 0.5, 24.5, 24, 0.5, 24.5);
+      pEnergyHisto[ilayer]->GetXaxis()->SetTitle("I");
+      pEnergyHisto[ilayer]->GetYaxis()->SetTitle("J");
+      pEnergyHisto[ilayer]->SetStats(0);
     }
 
   //Create list
   TList *m_histoMap = new TList();
   m_histoMap->SetName("HitMap List");
-
+  TList *m_histoEnergyMap = new TList();
+  m_histoEnergyMap->SetName("HitMap_Energy List");
   //Loop over rootfile
   for(int n = 0; n < tree->GetEntries(); n++)
     {
@@ -1853,32 +2212,12 @@ void AnalysisThread::HitMap()
 	  int layer = ahc_hitK[i];
 	  if(ahc_hitK[i] > nLayer) continue;
 
-	  bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
-	  if (isT0channel) continue;
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
 
 	  //inverse filling because reverse axis /*Energy weighted */
 	  pHisto[layer-1]->Fill(25 - I , J, 1);
-	  //pHisto[layer]->Fill(25 - I , J, ahc_hitEnergy[i]);
-	}
-
-      if(EBU)
-	{
-	  for(int i = 0; i < emc_nHits; i++)
-	    {
-	      int I = emc_hitI[i];
-	      int J = emc_hitJ[i];
-	      int layer = emc_hitK[i];
-	      if(emc_hitK[i] > nLayer) continue;
-
-	      //inverse filling because reverse axis Energy weighted
-	      if(emc_hitK[i] == 1 || emc_hitK[i] == 3)
-		//pHisto[layer]->Fill(37 - I, J, emc_hitEnergy[i]);
-		pHisto[layer]->Fill(37 - I, J, 1);
-	      if(emc_hitK[i] == 2)
-		//pHisto[layer]->Fill(5 - I, J, emc_hitEnergy[i]);
-		pHisto[layer-1]->Fill(5 - I, J, 1);
-
-	    }
+	  pEnergyHisto[layer-1]->Fill(25 - I , J, ahc_hitEnergy[i]);
 	}
     }
 
@@ -1886,6 +2225,7 @@ void AnalysisThread::HitMap()
   for(int ilayer = 0; ilayer < nLayer; ilayer++)
     {
       m_histoMap->Add(pHisto[ilayer]);
+      m_histoEnergyMap->Add(pEnergyHisto[ilayer]);
     }
 
   //Lock rootfile to write
@@ -1899,6 +2239,8 @@ void AnalysisThread::HitMap()
   pArchive->MakeRoot(m_dirName);
   pArchive->mkdir("HitMap");
   pArchive->WriteElement(m_histoMap);
+  pArchive->mkdir("HitMap_Energy");
+  pArchive->WriteElement(m_histoEnergyMap);
   pArchive->close();
   mutex.unlock();
 
@@ -1906,9 +2248,11 @@ void AnalysisThread::HitMap()
 
   emit log("DEBUG", QString("HitMap check done in %1 secs").arg(QString::number(m_time)));
   delete m_histoMap;
+  delete m_histoEnergyMap;
   for(int ilayer = 0; ilayer < nLayer; ilayer++)
     {
       delete pHisto[ilayer];
+      delete pEnergyHisto[ilayer];
     }
   delete tree;
 }
