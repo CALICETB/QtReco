@@ -14,63 +14,51 @@
 
 <marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
   <execute>
+    <processor name="EUDAQEventBuilder2016"/>
     <!--processor name="MyLabviewConverter2"/-->
-    <processor name="EUDAQEventBuilder"/>
     <processor name="ProgressHandler"/>
-    <processor name="MyRunTimeInfo"/>
     <processor name="GeoConditions"/>
     <processor name="Ahc2MappingProcessor"/>
     <processor name="Ahc2CellDescriptionProcessor"/>
     <processor name="Ahc2CalibrationsProcessor"/>
     <processor name="Ahc2CalibrateProcessorHCAL"/>
+    <processor name="Ahc2CalibrateProcessorECAL"/>
+    <processor name="EcalRootTreeWriter"/>
     <processor name="HcalRootTreeWriter"/>
+    <!--processor name="MyRunTimeInfo"/-->
     <processor name="MyLCIOOutputProcessor"/>
   </execute>
 
   <global>
-    <!--parameter name="LCIOInputFiles">
-     /nfs/dust/ilc/group/flchcal/AHCAL_Commissioning_2017_2018/2018Apr/Full_stack_test/cosmics/slcio/180417191224_ahcalandbif_run005802.slcio
-    </parameter-->
-   <parameter name="LCIOInputFiles">
+    <parameter name="LCIOInputFiles">
      INPUT
     </parameter>
     <!-- limit the number of processed records (run+evt): -->  
-    <parameter name="MaxRecordNumber" value="100000" />  
+    <parameter name="MaxRecordNumber" value="0" />  
     <parameter name="SkipNEvents" value="0" />  
     <parameter name="SupressCheck" value="false" />  
-    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> ERROR </parameter> 
   </global>
 
-  <processor name="EUDAQEventBuilder" type="EUDAQEventBuilder2018_cosmics">
-    <parameter name="InputCollectionName" type="String"> EUDAQDataScCAL </parameter>
-    <parameter name="InputCollectionNameTemp" type="String"> TempSensor </parameter>
-    <parameter name="DetectorType" type="String"> Ahc2 </parameter>
-    <parameter name="OutputCollectionNameECAL" type="String"> EUDAQDataEcal </parameter>
-    <parameter name="OutputCollectionNameHCAL" type="String"> EUDAQDataHcal </parameter>
-    </processor>
-
-
- <!-- <processor name="EUDAQEventBuilder" type="EUDAQEventBuilder2016">
-    <parameter name="InputCollectionName" type="String"> EUDAQDataScCAL </parameter>
-    <parameter name="InputCollectionNameTemp" type="String"> TempSensor </parameter>
-    <parameter name="InputCollectionNameBIF" type="String"> EUDAQDataBIF </parameter>
-    <parameter name="DetectorType" type="String"> Ahc2 </parameter>
-    <parameter name="OutputCollectionNameECAL" type="String"> EUDAQDataEcal </parameter>
-    <parameter name="OutputCollectionNameHCAL" type="String"> EUDAQDataHcal </parameter>
-    <!-- Only propagate validated event >
-    <parameter name="onlyValidatedEvents" type="Bool"> true </parameter>
-    <parameter name="BIF_offset" type="Int"> 68110  </parameter>
-    
-  </processor-->
+  <processor name="EUDAQEventBuilder2016" type="EUDAQEventBuilder2016">
+    <parameter name="DetectorType" type="string"> ScCAL </parameter>
+    <!--INPUT COLLECTIONS-->
+    <!--Name of the input collection of EUDAQ lcio raw data-->
+    <parameter name="InputCollectionName" type="string"> EUDAQDataScCAL </parameter>
+    <!--Name of the input collection of EUDAQ temperature sensor data-->
+    <parameter name="InputCollectionNameTemp" type="string"> TempSensor </parameter>
+    <!--Name of the input collection of EUDAQ BIF data-->
+    <parameter name="InputCollectionNameBIF" type="string"> EUDAQDataBIF </parameter>
+    <!--OUTPUT COLLECTIONS-->
+    <!--Name of the output collection of EUDAQ lcio ECAL  data-->
+    <parameter name="OutputCollectionNameECAL" type="string"> LabviewDataECAL </parameter>
+    <!--Name of the output collection of EUDAQ lcio HCAL  data-->
+    <parameter name="OutputCollectionNameHCAL" type="string"> LabviewDataHCAL </parameter>
+  </processor>
 
   <processor name="MyRunTimeInfo" type="RunTimeProcessor">
-      <!-- XXX: Run Time Info-->
-    <!--parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/-->
-    <!--Collection from DB which contains information about the location of a run-->
-    <parameter name="RunLocationFolder" type="string" value="/cd_calice_Ahc2/TestbeamMay2017/RunLocation"/>
-    <!--Run number of the run for MC files-->
-    <parameter name="RunTimeCollectionName" type="string"> /cd_calice_Ahc2/TestbeamMay2017/RunTimeInfo </parameter>
-    <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:calicedb:gFd+5Thn:3306"/>
+  <parameter name="RunTimeCollectionName" type="string"> /cd_calice_cernSPS2015/TestbeamJuly2015/RunTimeInfo </parameter>
+  <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:calicedb:gFd+5Thn:3306"/>
   </processor>
 
   <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
@@ -84,8 +72,8 @@
     <!--force keep of the named collections - overrules DropCollectionTypes (and DropCollectionNames)-->
     <!--parameter name="KeepCollectionNames" type="StringVec">  </parameter-->
     <!-- name of output file -->
-    <parameter name="LCIOOutputFile" type="string">
-      SLCIO_OUTPUT
+    <parameter name="LCIOOutputFile" type="string"> 
+      OUTPUT_SLCIO
     </parameter>
     <!--write mode for output file:  WRITE_APPEND or WRITE_NEW-->
     <parameter name="LCIOWriteMode" type="string"> WRITE_NEW </parameter>
@@ -96,7 +84,17 @@
   </processor>
 
 
- 
+  <processor name="MyLabviewConverter2" type="LabviewConverter2">
+    <!--Reads the ascii ahcal labview raw data files. Make sure to not specify any LCIOInputFiles in the steering in order to read the Calice native raw data files .-->
+    <!--Initial String to the ahcal data file. i.e. 'Run'-->
+    <parameter name="Data" type="string"> INPUT  </parameter>
+    <!--Type name of the detector. Currently valid identifiers are: AHC2, AHC2M AEC-->
+    <parameter name="DetectorType" type="string"> AHC2M </parameter>
+    <!--Runnumber-->
+    <parameter name="Runnumber" type="int"> RUNNUMBER </parameter>
+    <!--First part of Slow Control Block, HBU 120 lines, EPT 1920 lines,  AHC2M New Labview output 0 lines-->
+    <parameter name="SlowControlLineNumber" type="int"> 0 </parameter>
+  </processor>
 
   <processor name="ProgressHandler" type="ProgressHandler">
     <!--Report event/run numbers at fixed time intervals, and handle SIGINT (Ctrl-C) for a graceful exit.-->
@@ -108,24 +106,21 @@
   <processor name="GeoConditions" type="ConditionsProcessor">
     <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/>
     <parameter name="DBCondHandler" type="StringVec">
-      Ahc2ModuleDescription                 /cd_calice_Ahc2/TestbeamMay2018/ModuleDescription                   HEAD
-      Ahc2ModuleConnection                  /cd_calice_Ahc2/TestbeamMay2018/ModuleConnection                    HEAD
-      Ahc2ModuleLocationReference           /cd_calice_Ahc2/TestbeamMay2018/ModuleLocationReference             HEAD
-      Ahc2HardwareConnection                /cd_calice_Ahc2/TestbeamMay2018/Ahc2HardwareConnection              HEAD
-      Ahc2DetectorTransformation            /cd_calice_Ahc2/TestbeamMay2018/DetectorTransformation              HEAD
-      E4DPedestal                           /cd_calice_Ahc2/TestbeamMay2018/Pedestal                            HEAD
-      E4DGainConstants                      /cd_calice_Ahc2/TestbeamMay2018/gain_constants                      HEAD
-      E4DGainSlopes                         /cd_calice_Ahc2/TestbeamMay2018/gain_slopes                         HEAD
-      E4DMipConstants                       /cd_calice_Ahc2/TestbeamMay2018/mip_constants                       HEAD
-      E4DMipSlopes                          /cd_calice_Ahc2/TestbeamMay2018/mip_slopes                          HEAD
-      E4DDeadCellMap                        /cd_calice_Ahc2/TestbeamMay2018/DeadCellMap                         HEAD
-      E4DSaturationParameters               /cd_calice_Ahc2/TestbeamMay2018/SaturationParameters                HEAD
-      E4DIntercalibration                   /cd_calice_Ahc2/TestbeamMay2018/Intercalibration                    HEAD
-      E4DPhysicsCalibIntercalibration       /cd_calice_Ahc2/TestbeamMay2018/PhysicsCalibIntercalibration        HEAD
-      E4DTimeSlopes                         /cd_calice_Ahc2/TestbeamMay2018/TimeSlopes                          HEAD
-      E4DTimeOffset                         /cd_calice_Ahc2/TestbeamMay2018/TimeOffset                          HEAD
-
- </parameter>
+      Ahc2ModuleDescription        /test_eldwan/TestbeamMay2016/ModuleDescription               HEAD
+      Ahc2ModuleConnection         /test_eldwan/TestbeamMay2016/ModuleConnection                HEAD
+      Ahc2ModuleLocationReference  /test_eldwan/TestbeamMay2016/ModuleLocationReference         HEAD
+      Ahc2DetectorTransformation   /test_eldwan/TestbeamMay2016/DetectorTransformation          HEAD
+      Ahc2HardwareConnection       /test_eldwan/TestbeamMay2016/Ahc2HardwareConnection          HEAD
+      E4DPedestal                  /test_eldwan/TestbeamMay2016/Pedestal                        HEAD
+      E4DGainConstants             /test_eldwan/TestbeamMay2016/gain_constants                  HEAD
+      E4DGainSlopes                /test_eldwan/TestbeamMay2016/gain_slopes                     HEAD
+      E4DMipConstants              /test_eldwan/TestbeamMay2016/mip_constants                   HEAD
+      E4DMipSlopes                 /test_eldwan/TestbeamMay2016/mip_slopes                      HEAD
+      E4DDeadCellMap               /test_eldwan/TestbeamMay2016/DeadCellMap                     HEAD
+      E4DSaturationParameters      /test_eldwan/TestbeamMay2016/SaturationParameters            HEAD
+      E4DIntercalibration          /test_eldwan/TestbeamMay2016/Intercalibration                HEAD
+      E4DPhysicsCalibIntercalibration          /test_eldwan/TestbeamMay2016/PhysicsCalibIntercalibration   HEAD
+    </parameter>
   </processor>
 
   <processor name="Ahc2MappingProcessor" type="MappingProcessor">
@@ -140,8 +135,10 @@
 
   <processor name="Ahc2CellDescriptionProcessor" type="CellDescriptionProcessor">
     <!--Processor that provides a MappedContainer of CALICE CellDescription objects from conditions data-->
+
     <!--name of MappingProcessor which takes care of the mapping-->
     <parameter name="MappingProcessorName"   type="string"> Ahc2MappingProcessor </parameter>
+
     <!--Name of the DetectorTransformation collection-->
     <parameter name="DetectorTransformation" type="string" lcioInType="LCGenericObject"> Ahc2DetectorTransformation </parameter>
     <!--Name of the ModuleConnection collection-->
@@ -174,10 +171,6 @@
     <parameter name="SaturationParametersCollection" type="string" lcioInType="LCGenericObject"> E4DSaturationParameters </parameter>
     <!--Collection with quality flags-->
     <parameter name="CellQualityCollection" type="string" lcioInType="LCGenericObject"> E4DDeadCellMap </parameter>
-    <!--Name of the time slopes collection-->
-    <parameter name="TimeSlopesParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeSlopes </parameter>
-    <!--Name of the time Pedestal collection-->
-    <parameter name="TimeOffsetParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeOffset </parameter>
   </processor>
 
   <processor name="Ahc2CalibrateProcessorHCAL" type="Ahc2CalibrateProcessor">
@@ -188,21 +181,20 @@
     <parameter name="Ahc2CalibrationsProcessorName" type="string"> Ahc2CalibrationsProcessor </parameter>
     <!--Name of the Ahc2HardwareConnection Collection.-->
     <parameter name="HardwareConnectionCollection" type="string"> Ahc2HardwareConnection </parameter>
+    <!--apply (1) or ignore (0) if it is the new data format in the EUDAQ -->
+    <parameter name="NewDataFormat" type="bool"> true </parameter>
     <!--Name of the input collection-->
-    <parameter name="InputCollectionName" type="string"> EUDAQDataHcal </parameter>
-    <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
-    <parameter name="HasBIF" type="bool"> false </parameter>
-    <parameter name="BIFCollectionName" type="string"> BIFData </parameter>
+    <parameter name="InputCollectionName" type="string"> LabviewDataHCAL </parameter>
     <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
     <parameter name="MappingProcessorName" type="string"> Ahc2MappingProcessor </parameter>
     <!--Minimal energy deposition in units of MIP to keep hit, applied only if ZeroSuppression==1.-->
     <parameter name="MipCut" type="float"> 0.5 </parameter>
     <!--AHCal conversion factor from MIP to GeV-->
-    <parameter name="MipToGeVFactor" type="float"> 0.0255 </parameter> <!-- What is with this number? => is not used -->
+    <parameter name="MipToGeVFactor" type="float"> 0.0255 </parameter>
     <!--Name of the output AHCal hit collection, of type CalorimeterHit-->
     <parameter name="OutputAhcHitCollectionName" type="string"> Ahc2Calorimeter_Hits </parameter>
     <!--apply (1) or ignore (0) the pedestal subtraction-->
-    <parameter name="PedestalSubtraction" type="bool"> true </parameter>
+    <parameter name="PedestalSubtraction" type="bool"> PEDSUB </parameter>
     <!--scale factor for the energy-->
     <!--parameter name="ScaleEnergy" type="float">1 </parameter-->
     <!--apply (1) or ignore (0) the MIP threshold cut-->
@@ -222,17 +214,7 @@
     <!--Filter cells that use some default value in calibration.-->
     <parameter name="filterDefaultCells" type="bool"> false </parameter>
     <!--Convert RAW ADC to MIP cell by cell-->
-    <parameter name="doMipConversion" type="bool"> true </parameter>
-    <!--Convert RAW TDC to ns cell by cell-->
-    <parameter name="doTimeConversion" type="bool"> false </parameter>
-
-    <parameter name="NewDataFormat" type="bool"> true </parameter>
-    
-    <parameter name="module2Layer" type="vector<int>"> 26 1 2 3 4 5 39 6 7 8 9 18 10 11 19 20 21 22 12 27 13 23 14 15 16 28 31 24 35 17 32 29 36 37 40 38 34 33 25 30  </parameter>
-    <parameter name="useRealModuleNumber" type="bool"> true  </parameter>
-
-    <parameter name="skipFirstMemoryCell" type="bool"> false </parameter>
-    
+    <parameter name="doMipConversion" type="bool"> MIPCONV </parameter>
   </processor>
 
   <processor name="Ahc2CalibrateProcessorECAL" type="Ahc2CalibrateProcessor">
@@ -246,7 +228,7 @@
     <!--apply (1) or ignore (0) if it is the new data format in the EUDAQ -->
     <parameter name="NewDataFormat" type="bool"> true </parameter>
     <!--Name of the input collection-->
-    <parameter name="InputCollectionName" type="string"> EUDAQDataEcal </parameter>
+    <parameter name="InputCollectionName" type="string"> LabviewDataECAL </parameter>
     <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
     <parameter name="MappingProcessorName" type="string"> Ahc2MappingProcessor </parameter>
     <!--Minimal energy deposition in units of MIP to keep hit, applied only if ZeroSuppression==1.-->
@@ -256,7 +238,7 @@
     <!--Name of the output AHCal hit collection, of type CalorimeterHit-->
     <parameter name="OutputAhcHitCollectionName" type="string"> ScEcalCalorimeter_Hits </parameter>
     <!--apply (1) or ignore (0) the pedestal subtraction-->
-    <parameter name="PedestalSubtraction" type="bool"> true </parameter>
+    <parameter name="PedestalSubtraction" type="bool"> PEDSUB </parameter>
     <!--scale factor for the energy-->
     <!--parameter name="ScaleEnergy" type="float">1 </parameter-->
     <!--apply (1) or ignore (0) the MIP threshold cut-->
@@ -276,14 +258,25 @@
     <!--Filter cells that use some default value in calibration.-->
     <parameter name="filterDefaultCells" type="bool"> false </parameter>
     <!--Convert RAW ADC to MIP cell by cell-->
-    <parameter name="doMipConversion" type="bool"> true </parameter>
+    <parameter name="doMipConversion" type="bool"> MIPCONV </parameter>
   </processor>
 
-   <!-- Write root file containing Temp data -->
+  <!-- Write root file containing Temp data -->
+  <processor name="EcalRootTreeWriter" type="RootTreeWriter">
+    <!--Name of the output ROOT file-->
+    <parameter name="OutFileName" type="string"> OUTPUT_ROOT </parameter>
+    <parameter name="HitWriteEngine_enable" type="int">1 </parameter>
+    <parameter name="HitWriteEngine_InCol" type="string" lcioInType="CalorimeterHit"> ScEcalCalorimeter_Hits </parameter>
+    <parameter name="HitWriteEngine_caloType" type="string">emc </parameter>
+    <parameter name="HitWriteEngine_eventFiltering" type="int">1 </parameter>
+    <parameter name="HitWriteEngine_informationLevel" type="int">3 </parameter>
+    <parameter name="HitWriteEngine_cogIJenable" type="int">1 </parameter>
+  </processor>
+
+  <!-- Write root file containing Temp data -->
   <processor name="HcalRootTreeWriter" type="RootTreeWriter">
     <!--Name of the output ROOT file-->
-    <!--parameter name="OutFileName" type="string"> /afs/desy.de/user/l/lomidze/afs/EventDisplay/data/180417191224_ahcalandbif_run005802.root </parameter-->
-    <parameter name="OutFileName" type="string"> OUTPUT_ROOT  </parameter>
+    <parameter name="OutFileName" type="string"> OUTPUT_ROOT </parameter>
     <parameter name="HitWriteEngine_enable" type="int">1 </parameter>
     <parameter name="HitWriteEngine_InCol" type="string" lcioInType="CalorimeterHit"> Ahc2Calorimeter_Hits </parameter>
     <parameter name="HitWriteEngine_caloType" type="string">ahc </parameter>

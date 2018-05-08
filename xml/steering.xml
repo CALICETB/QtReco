@@ -11,7 +11,7 @@
 
   <!-- Mapping file -->
   <Mapping>
-    <parameter name="Filename" value="/afs/desy.de/group/flc/pool/saivahu/mapping_files/Mapping_May2018.txt"/>
+    <parameter name="Filename" value="/home/calice/OnlineMonitor/build_QtReco/mapping/MapChipChan2IJK_May2016_2ndConfig.txt"/>
   </Mapping>
 
   <T0s>
@@ -30,15 +30,12 @@
     <!-- Aborber type Tungsten/Iron -->
     <parameter name="Absorber" value="Iron"/>
     <!-- Run Number -->
-    <parameter name="Run" value="5802"/>
+    <parameter name="Run" value="41962"/>
     <!-- Input File PATH -->
     <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
-    <!--parameter name="Input_PATH" value="/pnfs/desy.de/calice/tb-desy/native/desyAhcal2018/February2018/slcioAhcalBif/"/-->
-    <parameter name="Input_PATH" value="/nfs/dust/ilc/group/flchcal/AHCAL_Commissioning_2017_2018/2018Apr/Full_stack_test/cosmics/slcio"/>
-
-
+    <parameter name="Input_PATH" value="/home/calice/Desktop/"/>
     <!-- Output File PATH -->
-    <parameter name="Output_PATH" value="/afs/desy.de/group/flc/pool/saivahu/Test/"/>
+    <parameter name="Output_PATH" value="/home/calice/Desktop/Reco_Data"/>
     <!-- Pedestal substraction -->
     <parameter name="Pedestal" value="true"/>
     <!-- ADC to MIP Conversion -->
@@ -46,7 +43,7 @@
   </Steering>
 
   <Storage>
-    <parameter name="File" value="/tmp/saivahu/Archive_Monitor.root"/>
+    <parameter name="File" value="/tmp/Archive_Monitor.root"/>
   </Storage>
 
   <Analysis>
@@ -55,13 +52,13 @@
     <!-- MIP Cut value -->
     <parameter name="MIP_Cut" value="0.5"/>
     <!-- Nlayers -->
-    <parameter name="NLayer" value="38"/>
+    <parameter name="NLayer" value="3"/>
     <!-- nT0s for Analysis -->
     <parameter name="nT0s" value="0"/>
     <!-- Cut on Min Number of Hits in Event -->
     <parameter name="NMinHits" value="0"/>
     <!-- Cut on Max Number of Hits in Event -->
-    <parameter name="NMaxHits" value="1000"/>
+    <parameter name="NMaxHits" value="30"/>
   </Analysis>
 
 </DMAHCAL>
