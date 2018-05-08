@@ -1,7 +1,7 @@
 #!/bin/bash
 
-ILC_SOFT=/home/calice/ilcsoft/v01-17-09
-MY_INSTALL=/home/calice/Calice_soft/myInstall
+ILC_SOFT=/cvmfs/ilc.desy.de/sw/x86_64_gcc48_sl6/v01-17-11/
+MY_INSTALL=/afs/desy.de/group/flc/pool/saivahu/newCaliceSoft26042018/CaliceInstall/build/myInstall/
 
 source ${ILC_SOFT}/init_ilcsoft.sh
 
