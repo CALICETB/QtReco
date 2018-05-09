@@ -1427,32 +1427,6 @@ void AnalysisThread::EnergyChannel()
 	  pHistoCell[ahc_hitK[i]-1][ChipChn]->Fill(ampl);
 
 	}
-
-      if(EBU)
-	{
-	  for(int i = 0; i < emc_nHits; i++)
-	    {
-	      if(emc_hitK[i] > nLayer) continue;
-
-	      //Fill EBU histos
-	      if(emc_hitEnergy[i] < 0.5) continue;
-
-	      pHisto[emc_hitK[i]-1]->Fill(emc_hitEnergy[i]);
-
-	      int ChipChn = GetChipChn(emc_hitI[i], emc_hitJ[i], emc_hitK[i]);
-
-	      if(pHistoCell[emc_hitK[i]-1].count(ChipChn) == 0)
-		{
-		  TString histoname = "SpectrumLayer_";
-		  histoname += emc_hitK[i];
-		  histoname += "_ChipChn";
-		  histoname += ChipChn;
-		  pHistoCell[emc_hitK[i]-1][ChipChn] = new TH1F(histoname, histoname, 80, -0.5, 4);
-		}
-
-	      pHistoCell[emc_hitK[i]-1][ChipChn]->Fill(emc_hitEnergy[i]);
-	    }
-	}
     }
 
   TList *m_cellHisto = new TList();
@@ -2210,7 +2184,6 @@ void AnalysisThread::HitMap()
 
       //SPECIFIC TO DESY May 2016
       pHisto[ilayer] = new TH2I(hname, hname, 24, 0.5, 24.5, 24, 0.5, 24.5);
-
       pHisto[ilayer]->GetXaxis()->SetTitle("I");
       pHisto[ilayer]->GetYaxis()->SetTitle("J");
       pHisto[ilayer]->SetStats(0);
@@ -2226,8 +2199,11 @@ void AnalysisThread::HitMap()
   m_histoMap->SetName("HitMap List");
   TList *m_histoEnergyMap = new TList();
   m_histoEnergyMap->SetName("HitMap_Energy List");
+<<<<<<< HEAD
+=======
   TList *m_histoLogMap = new TList();
   m_histoEnergyMap->SetName("HitMap_Log List");
+>>>>>>> origin/Saivahu_new
   //Loop over rootfile
   for(int n = 0; n < tree->GetEntries(); n++)
     {
@@ -2254,7 +2230,10 @@ void AnalysisThread::HitMap()
   for(int ilayer = 0; ilayer < nLayer; ilayer++)
     {
       m_histoMap->Add(pHisto[ilayer]);
+<<<<<<< HEAD
+=======
       m_histoLogMap->Add(pHisto[ilayer]);
+>>>>>>> origin/Saivahu_new
       m_histoEnergyMap->Add(pEnergyHisto[ilayer]);
     }
 
@@ -2271,8 +2250,11 @@ void AnalysisThread::HitMap()
   pArchive->WriteElement(m_histoMap);
   pArchive->mkdir("HitMap_Energy");
   pArchive->WriteElement(m_histoEnergyMap);
+<<<<<<< HEAD
+=======
   pArchive->mkdir("HitMap_Log");
   pArchive->WriteElement(m_histoLogMap);
+>>>>>>> origin/Saivahu_new
   pArchive->close();
   mutex.unlock();
 
@@ -2281,7 +2263,10 @@ void AnalysisThread::HitMap()
   emit log("DEBUG", QString("HitMap check done in %1 secs").arg(QString::number(m_time)));
   delete m_histoMap;
   delete m_histoEnergyMap;
+<<<<<<< HEAD
+=======
   delete m_histoLogMap;
+>>>>>>> origin/Saivahu_new
   for(int ilayer = 0; ilayer < nLayer; ilayer++)
     {
       delete pHisto[ilayer];
