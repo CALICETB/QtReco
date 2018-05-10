@@ -11,7 +11,7 @@
 
   <!-- Mapping file -->
   <Mapping>
-    <parameter name="Filename" value="/afs/desy.de/group/flc/pool/saivahu/mapping_files/Mapping_May2018.txt"/>
+    <parameter name="Filename" value="/home/calice/Reconstruction/2018_May_CERN/MapChipChan2IJK_May2018.txt"/>
   </Mapping>
 
   <T0s>
@@ -30,15 +30,14 @@
     <!-- Aborber type Tungsten/Iron -->
     <parameter name="Absorber" value="Iron"/>
     <!-- Run Number -->
-    <parameter name="Run" value="5802"/>
+    <parameter name="Run" value="60281"/>
     <!-- Input File PATH -->
     <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
     <!--parameter name="Input_PATH" value="/pnfs/desy.de/calice/tb-desy/native/desyAhcal2018/February2018/slcioAhcalBif/"/-->
-    <parameter name="Input_PATH" value="/nfs/dust/ilc/group/flchcal/AHCAL_Commissioning_2017_2018/2018Apr/Full_stack_test/cosmics/slcio"/>
-
+    <parameter name="Input_PATH" value="/media/sf_TB2018-data/slcio/"/>
 
     <!-- Output File PATH -->
-    <parameter name="Output_PATH" value="/afs/desy.de/group/flc/pool/saivahu/Test/"/>
+    <parameter name="Output_PATH" value="/media/sf_hdd4/ReconstructedFiles/"/>
     <!-- Pedestal substraction -->
     <parameter name="Pedestal" value="true"/>
     <!-- ADC to MIP Conversion -->
@@ -46,7 +45,7 @@
   </Steering>
 
   <Storage>
-    <parameter name="File" value="/tmp/saivahu/Archive_Monitor.root"/>
+    <parameter name="File" value="/tmp/Archive_Monitor.root"/>
   </Storage>
 
   <Analysis>
@@ -61,7 +60,7 @@
     <!-- Cut on Min Number of Hits in Event -->
     <parameter name="NMinHits" value="0"/>
     <!-- Cut on Max Number of Hits in Event -->
-    <parameter name="NMaxHits" value="1000"/>
+    <parameter name="NMaxHits" value="100000"/>
   </Analysis>
 
 </DMAHCAL>

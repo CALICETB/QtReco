@@ -927,7 +927,7 @@ void AnalysisThread::Esum()
 
   if(MIP)
     {
-      booker->Book1DHistograms("Energy_Sum", 300, 0, 150);
+      booker->Book1DHistograms("Energy_Sum", 3000, 0, 3000);
       booker->SetAxis("1D", "Energy [MIP]", "# Entries");
     }
   else

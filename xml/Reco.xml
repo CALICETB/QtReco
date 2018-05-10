@@ -17,7 +17,7 @@
     <!--processor name="MyLabviewConverter2"/-->
     <processor name="EUDAQEventBuilder"/>
     <processor name="ProgressHandler"/>
-    <processor name="MyRunTimeInfo"/>
+    <!--processor name="MyRunTimeInfo"/-->
     <processor name="GeoConditions"/>
     <processor name="Ahc2MappingProcessor"/>
     <processor name="Ahc2CellDescriptionProcessor"/>
@@ -35,10 +35,10 @@
      INPUT
     </parameter>
     <!-- limit the number of processed records (run+evt): -->  
-    <parameter name="MaxRecordNumber" value="100000" />  
+    <parameter name="MaxRecordNumber" value="1000000" />  
     <parameter name="SkipNEvents" value="0" />  
     <parameter name="SupressCheck" value="false" />  
-    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> ERROR </parameter>
   </global>
 
   <processor name="EUDAQEventBuilder" type="EUDAQEventBuilder2018_cosmics">
@@ -106,27 +106,28 @@
 
 
   <processor name="GeoConditions" type="ConditionsProcessor">
-    <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/>
-    <parameter name="DBCondHandler" type="StringVec">
-      Ahc2ModuleDescription                 /cd_calice_Ahc2/TestbeamMay2018/ModuleDescription                   HEAD
-      Ahc2ModuleConnection                  /cd_calice_Ahc2/TestbeamMay2018/ModuleConnection                    HEAD
-      Ahc2ModuleLocationReference           /cd_calice_Ahc2/TestbeamMay2018/ModuleLocationReference             HEAD
-      Ahc2HardwareConnection                /cd_calice_Ahc2/TestbeamMay2018/Ahc2HardwareConnection              HEAD
-      Ahc2DetectorTransformation            /cd_calice_Ahc2/TestbeamMay2018/DetectorTransformation              HEAD
-      E4DPedestal                           /cd_calice_Ahc2/TestbeamMay2018/Pedestal                            HEAD
-      E4DGainConstants                      /cd_calice_Ahc2/TestbeamMay2018/gain_constants                      HEAD
-      E4DGainSlopes                         /cd_calice_Ahc2/TestbeamMay2018/gain_slopes                         HEAD
-      E4DMipConstants                       /cd_calice_Ahc2/TestbeamMay2018/mip_constants                       HEAD
-      E4DMipSlopes                          /cd_calice_Ahc2/TestbeamMay2018/mip_slopes                          HEAD
-      E4DDeadCellMap                        /cd_calice_Ahc2/TestbeamMay2018/DeadCellMap                         HEAD
-      E4DSaturationParameters               /cd_calice_Ahc2/TestbeamMay2018/SaturationParameters                HEAD
-      E4DIntercalibration                   /cd_calice_Ahc2/TestbeamMay2018/Intercalibration                    HEAD
-      E4DPhysicsCalibIntercalibration       /cd_calice_Ahc2/TestbeamMay2018/PhysicsCalibIntercalibration        HEAD
-      E4DTimeSlopes                         /cd_calice_Ahc2/TestbeamMay2018/TimeSlopes                          HEAD
-      E4DTimeOffset                         /cd_calice_Ahc2/TestbeamMay2018/TimeOffset                          HEAD
+    <parameter name="DBFileHandler" type="StringVec">
+      Ahc2ModuleDescription                 /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_ModuleDescription_HEAD_20180419_100001.slcio 		ModuleDescription
+      Ahc2ModuleConnection                  /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_ModuleConnection_HEAD_20180419_100002.slcio		ModuleConnection
+      Ahc2ModuleLocationReference           /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_ModuleLocationReference_HEAD_20180419_100002.slcio		ModuleLocationReference
+      Ahc2HardwareConnection                /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_Ahc2HardwareConnection_HEAD_20180419_100002.slcio		Ahc2HardwareConnection
+      Ahc2DetectorTransformation            /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_DetectorTransformation_HEAD_20180419_100002.slcio		DetectorTransformation
+      E4DPedestal                           /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_Pedestal_ahc2_002_20180509_085206.slcio			Pedestal
+      E4DGainConstants                      /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_gain_constants_ahc2_001_20180419_100002.slcio		gain_constants
+      E4DGainSlopes                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_gain_slopes_HEAD_20180419_100003.slcio			gain_slopes
+      E4DMipConstants                       /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_mip_constants_ahc2_001_20180419_100003.slcio		mip_constants
+      E4DMipSlopes                          /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_mip_slopes_HEAD_20180419_100003.slcio			mip_slopes
+      E4DDeadCellMap                        /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_DeadCellMap_HEAD_20180419_100003.slcio			DeadCellMap
+      E4DSaturationParameters               /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_SaturationParameters_HEAD_20180419_100004.slcio		SaturationParameters
+      E4DIntercalibration                   /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_Intercalibration_HEAD_20180419_100004.slcio		Intercalibration
+      E4DPhysicsCalibIntercalibration       /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_Physicscalibintercalibration_HEAD_20180419_100004.slcio	Physicscalibintercalibration
+      E4DTimeSlopes                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeSlopes_HEAD_20180419_100004.slcio			TimeSlopes
+      E4DTimeOffset                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeOffset_HEAD_20180419_100005.slcio			TimeOffset
 
  </parameter>
   </processor>
+
+      <!-- E4DMipConstants                       /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_mip_constants_ahc2_001_20180419_100003.slcio		mip_constants -->
 
   <processor name="Ahc2MappingProcessor" type="MappingProcessor">
     <!--Processor that provides a CALICE Mapping object from conditions data-->

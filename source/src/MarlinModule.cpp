@@ -51,7 +51,7 @@ void MarlinModule::run()
     emit log("DEBUG", "MarlinModule : Starting");
 
     QStringList args;
-    std::string steering = "/tmp/saivahu/Reco_Run_";
+    std::string steering = "/tmp/Reco_Run_";
     steering += Run_number;
     steering += ".xml";
     std::string script = "../scripts/myMarlin.sh";
