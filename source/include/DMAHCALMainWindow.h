@@ -51,6 +51,10 @@ public slots:
     void Open_EventDisplay();
     //Action to configure run
     void Configure();
+    
+    void Find_Run();
+    
+
     //Quit
     void Quit();
 

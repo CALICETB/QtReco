@@ -1,6 +1,6 @@
 #include "DMAHCALMainWindow.h"
 #include "ui_DMAHCALMainWindow.h"
-
+#include <QProcess>
 #include <QDebug>
 #include <QApplication>
 #include <QDesktopWidget>
@@ -17,12 +17,19 @@ DMAHCALMainWindow::DMAHCALMainWindow(QWidget *parent) :
 
     //Set General parameters
     m_hcal = new DMAHCAL();
-    m_hcal->SetVersion("1.3");
+    m_hcal->SetVersion("1.5");
     m_hcal->SetDetector("AHCAL");
 
     //instance of dispatcher
     m_dispatcher = new ApplicationModuleApi();
     isConfigured = false;
+
+    if(ui->radioButton->isChecked()) {
+      emit log("DEBUG", "Last RUn checked!!!!! ALOOOOOO");
+      ui->lineEdit->setText("Last Run");
+      UpdateGUI();
+      // ui->lineEdit->clear();
+    }
 
     //Dispatcher signals
     connect(m_dispatcher,SIGNAL(started()), this, SLOT(UpdateGUI()));
@@ -36,6 +43,7 @@ DMAHCALMainWindow::DMAHCALMainWindow(QWidget *parent) :
     connect(ui->Start, SIGNAL(clicked()), m_dispatcher, SLOT(Start()));
     connect(ui->Stop, SIGNAL(clicked()), m_dispatcher, SLOT(Stop()));
     connect(ui->Event_Display, SIGNAL(clicked()), this, SLOT(Open_EventDisplay()));
+    connect(ui->FindRun, SIGNAL(clicked()), this, SLOT(Find_Run()));
 
     //Update UI timer
     timer = new QTimer(this);
@@ -195,4 +203,60 @@ void DMAHCALMainWindow::Open_EventDisplay()
 {
     emit log("DEBUG", "Event Display not yet available!");
     m_dispatcher->OpenDEH();
+}
+
+
+
+
+void DMAHCALMainWindow::Find_Run()
+{
+  //emit log("DEBUG", "Event Display not yet available!");
+
+  
+  QString myrun;
+  QString arg;
+  QString minHits;
+  bool checked=false;
+
+  //Select Last run
+  if(ui->radioButton->isChecked()) {
+    ui->lineEdit->clear();
+    arg = "0";
+    checked=true;
+  }
+
+  //Enter particular run
+  if(ui->radioButton_2->isChecked()) {
+    arg = "2";
+    myrun = ui->lineEdit->text();
+    checked=true;
+  }
+  
+   if(!checked) {
+        QMessageBox::critical(this, "Configuration failed!", "Please select a option for run number!!!");
+   }
+   else {
+     if(arg=="2" && myrun=="") {
+       QMessageBox::critical(this, "ERROR!", "Enter run number!!!");
+       return;
+     }
+   }
+
+   if(arg=="0") {
+     emit log("DEBUG", "Looking for last run....");
+   }
+   if(arg=="2") {
+     emit log("DEBUG", "Looking for manually entered run: "+ui->lineEdit->text());
+   }
+
+
+  QString fileName = "/home/calice/Software/QtReco_devel/QtReco/scripts/findRun.sh";
+  
+  QProcess *process = new QProcess;
+  //process->start("../scripts/findRun.sh", QStringList() << arg << myrun << minHits);
+  process->start(fileName, QStringList() << arg << myrun << minHits);
+  process->waitForFinished();
+  emit log("DEBUG", process->readAllStandardOutput());
+ 
+
 }

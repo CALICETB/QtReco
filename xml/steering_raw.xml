@@ -30,7 +30,7 @@
     <!-- Aborber type Tungsten/Iron -->
     <parameter name="Absorber" value="Iron"/>
     <!-- Run Number -->
-    <parameter name="Run" value="060518"/>
+    <parameter name="Run" value="MyRunNumber"/>
     <!-- Input File PATH -->
     <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
     <!--parameter name="Input_PATH" value="/pnfs/desy.de/calice/tb-desy/native/desyAhcal2018/February2018/slcioAhcalBif/"/-->

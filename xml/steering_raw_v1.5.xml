@@ -30,14 +30,14 @@
     <!-- Aborber type Tungsten/Iron -->
     <parameter name="Absorber" value="Iron"/>
     <!-- Run Number -->
-    <parameter name="Run" value="060518"/>
+    <parameter name="Run" value="MyRunNumber"/>
     <!-- Input File PATH -->
     <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
     <!--parameter name="Input_PATH" value="/pnfs/desy.de/calice/tb-desy/native/desyAhcal2018/February2018/slcioAhcalBif/"/-->
-    <parameter name="Input_PATH" value="/media/sf_TB2018-data/slcio/Electron/-80GeV/No_PP/"/>
+    <parameter name="Input_PATH" value="/media/sf_TB2018-data/slcio/"/>
 
     <!-- Output File PATH -->
-    <parameter name="Output_PATH" value="/media/sf_hdd4/ReconstructedFiles"/>
+    <parameter name="Output_PATH" value="/media/sf_hdd4/ReconstructedFiles/"/>
     <!-- Pedestal substraction -->
     <parameter name="Pedestal" value="true"/>
     <!-- ADC to MIP Conversion -->
@@ -54,14 +54,13 @@
     <!-- MIP Cut value -->
     <parameter name="MIP_Cut" value="0.5"/>
     <!-- Nlayers -->
-    <parameter name="NLayer" value="40"/>
+    <parameter name="NLayer" value="38"/>
     <!-- nT0s for Analysis -->
     <parameter name="nT0s" value="0"/>
     <!-- Cut on Min Number of Hits in Event -->
     <parameter name="NMinHits" value="0"/>
     <!-- Cut on Max Number of Hits in Event -->
     <parameter name="NMaxHits" value="100000"/>
-    
   </Analysis>
 
 </DMAHCAL>

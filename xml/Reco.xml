@@ -11,7 +11,6 @@
    #                                        #
    ##########################################-->
 
-
 <marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
   <execute>
     <!--processor name="MyLabviewConverter2"/-->
@@ -35,33 +34,33 @@
      INPUT
     </parameter>
     <!-- limit the number of processed records (run+evt): -->  
-    <parameter name="MaxRecordNumber" value="1000000" />  
+    <parameter name="MaxRecordNumber" value="100000" />  
     <parameter name="SkipNEvents" value="0" />  
     <parameter name="SupressCheck" value="false" />  
     <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> ERROR </parameter>
   </global>
 
-  <processor name="EUDAQEventBuilder" type="EUDAQEventBuilder2018_cosmics">
+  <!--processor name="EUDAQEventBuilder" type="EUDAQEventBuilder2018_cosmics">
     <parameter name="InputCollectionName" type="String"> EUDAQDataScCAL </parameter>
     <parameter name="InputCollectionNameTemp" type="String"> TempSensor </parameter>
     <parameter name="DetectorType" type="String"> Ahc2 </parameter>
     <parameter name="OutputCollectionNameECAL" type="String"> EUDAQDataEcal </parameter>
     <parameter name="OutputCollectionNameHCAL" type="String"> EUDAQDataHcal </parameter>
-    </processor>
+    </processor-->
 
 
- <!-- <processor name="EUDAQEventBuilder" type="EUDAQEventBuilder2016">
+ <processor name="EUDAQEventBuilder" type="EUDAQEventBuilder2016">
     <parameter name="InputCollectionName" type="String"> EUDAQDataScCAL </parameter>
     <parameter name="InputCollectionNameTemp" type="String"> TempSensor </parameter>
     <parameter name="InputCollectionNameBIF" type="String"> EUDAQDataBIF </parameter>
     <parameter name="DetectorType" type="String"> Ahc2 </parameter>
     <parameter name="OutputCollectionNameECAL" type="String"> EUDAQDataEcal </parameter>
     <parameter name="OutputCollectionNameHCAL" type="String"> EUDAQDataHcal </parameter>
-    <!-- Only propagate validated event >
+    <!-- Only propagate validated event -->
     <parameter name="onlyValidatedEvents" type="Bool"> true </parameter>
-    <parameter name="BIF_offset" type="Int"> 68110  </parameter>
+    <parameter name="BIF_offset" type="Int"> 67685  </parameter>
     
-  </processor-->
+  </processor>
 
   <processor name="MyRunTimeInfo" type="RunTimeProcessor">
       <!-- XXX: Run Time Info-->
@@ -121,8 +120,8 @@
       E4DSaturationParameters               /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_SaturationParameters_HEAD_20180419_100004.slcio		SaturationParameters
       E4DIntercalibration                   /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_Intercalibration_HEAD_20180419_100004.slcio		Intercalibration
       E4DPhysicsCalibIntercalibration       /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_Physicscalibintercalibration_HEAD_20180419_100004.slcio	Physicscalibintercalibration
-      E4DTimeSlopes                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeSlopes_HEAD_20180419_100004.slcio			TimeSlopes
-      E4DTimeOffset                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeOffset_HEAD_20180419_100005.slcio			TimeOffset
+      E4DTimeSlopes                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeSlope_HEAD_20180513_083017.slcio			TimeSlope
+      E4DTimeOffset                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeOffset_HEAD_20180513_083012.slcio			TimeOffset
 
  </parameter>
   </processor>
@@ -192,7 +191,7 @@
     <!--Name of the input collection-->
     <parameter name="InputCollectionName" type="string"> EUDAQDataHcal </parameter>
     <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
-    <parameter name="HasBIF" type="bool"> false </parameter>
+    <parameter name="HasBIF" type="bool"> true </parameter>
     <parameter name="BIFCollectionName" type="string"> BIFData </parameter>
     <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
     <parameter name="MappingProcessorName" type="string"> Ahc2MappingProcessor </parameter>
@@ -225,7 +224,7 @@
     <!--Convert RAW ADC to MIP cell by cell-->
     <parameter name="doMipConversion" type="bool"> true </parameter>
     <!--Convert RAW TDC to ns cell by cell-->
-    <parameter name="doTimeConversion" type="bool"> false </parameter>
+    <parameter name="doTimeConversion" type="bool"> true </parameter>
 
     <parameter name="NewDataFormat" type="bool"> true </parameter>
     
@@ -290,7 +289,11 @@
     <parameter name="HitWriteEngine_caloType" type="string">ahc </parameter>
     <parameter name="HitWriteEngine_eventFiltering" type="int">1 </parameter>
     <parameter name="HitWriteEngine_informationLevel" type="int">3 </parameter>
-    <parameter name="HitWriteEngine_cogIJenable" type="int">1 </parameter>
+    <parameter name="HitWriteEngine_cogIJenable" type="int">0 </parameter>
+
+    <parameter name="BifWriteEngine_enable" type="int"> 1 </parameter>
+    <parameter name="BifWriteEngine_prefix" type="string"> bif_ </parameter>
+    <parameter name="BifWriteEngine_InCol" type="string"> BIFData </parameter>
   </processor>
 
 </marlin>
