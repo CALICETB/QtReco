@@ -58,6 +58,8 @@ protected:
     void Shower();
     //HitMap analysis
     void HitMap();
+    //nHitscogZ analysis
+    void nHitscogZ();
     //Temperature analysis
     //void Temperature();
 

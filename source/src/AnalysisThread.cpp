@@ -78,6 +78,7 @@ void AnalysisThread::run()
   Hits();
   Shower();
   HitMap();
+  nHitscogZ();
   //Temperature();
   emit finished();
 }
@@ -2110,6 +2111,176 @@ void AnalysisThread::Shower()
 }
 
 //-----------------------------------------------------------------------------------------------
+
+/*
+ * nHits vs. cogZ Module
+ * Creates a plot of number of hits vs. center of gravity in z direction
+ */
+
+void AnalysisThread::nHitscogZ()
+{
+  emit log("MESSAGE", "nHitscogZ started");
+
+  //start timer
+  timer.start();
+  int m_maxevents = 0;
+  double m_time = 0;
+
+  //Open roofile
+  pAnalysis->OpenTFile(m_Rootfile, "READ");
+
+  if(!pAnalysis->isOpened())
+    {
+      emit log("ERROR", QString("Can't open TFile : %1").arg(QString::fromStdString(m_Rootfile)));
+      return;
+    }
+
+
+  //Declare TTree
+  TTree *tree = (TTree*)pAnalysis->GetTree("bigtree");
+
+  //Declare variables
+  //HBU
+  Int_t runNumber;
+  Int_t eventNumber;
+  int ahc_hitI[MAXCELL];
+  int ahc_hitJ[MAXCELL];
+  int ahc_hitK[MAXCELL];
+  Float_t ahc_hitPos[MAXCELL][3];
+  Float_t ahc_hitEnergy[MAXCELL];
+  Float_t ahc_hitTime[MAXCELL];
+  Int_t ahc_nHits;
+
+  //Enable/disable branches
+  tree->SetBranchStatus("*", 0);
+  tree->SetBranchStatus("runNumber", 1);
+  tree->SetBranchStatus("eventNumber", 1);
+  tree->SetBranchStatus("ahc_nHits", 1);
+  tree->SetBranchStatus("ahc_hitI", 1);
+  tree->SetBranchStatus("ahc_hitJ", 1);
+  tree->SetBranchStatus("ahc_hitK", 1);
+  tree->SetBranchStatus("ahc_hitEnergy", 1);
+  tree->SetBranchStatus("ahc_hitTime", 1);
+  tree->SetBranchStatus("ahc_hitPos", 1);
+
+  //Declare branches
+  tree->SetBranchAddress("runNumber", &runNumber);
+  tree->SetBranchAddress("eventNumber", &eventNumber);
+  tree->SetBranchAddress("ahc_nHits", &ahc_nHits);
+  tree->SetBranchAddress("ahc_hitI", &ahc_hitI);
+  tree->SetBranchAddress("ahc_hitJ", &ahc_hitJ);
+  tree->SetBranchAddress("ahc_hitK", &ahc_hitK);
+  tree->SetBranchAddress("ahc_hitEnergy", &ahc_hitEnergy);
+  tree->SetBranchAddress("ahc_hitTime", &ahc_hitTime);
+  tree->SetBranchAddress("ahc_hitPos", &ahc_hitPos);
+
+  //Booking of histograms
+  DMAHCALBooker *booker = new DMAHCALBooker("nHitscogZ");
+
+  //Number of hits versus Center of gravity in Z
+  booker->Book2DHistograms("nHits_vs_cogZ", 200, 0, 1000);
+
+
+  //Create list 2D histo
+  TList *m_histo2DList = new TList();
+  m_histo2DList = booker->GetObjects("2D");
+  m_histo2DList->SetName("nHitscogZ List");
+
+  int nHits = 0;
+  float cogz = 0;
+  float SumE  = 0;
+  float SumZE =0;
+
+  //Loop over roofile
+  for(int n = 0; n < tree->GetEntries(); n++)
+    {
+      tree->GetEntry(n);
+      cogz = 0;
+      SumE = 0;
+      SumZE = 0;
+      nHits = 0;
+
+      m_maxevents = std::max(m_maxevents, eventNumber);
+
+      //T0 criteria
+      int nT0 = NumberOfT0(ahc_hitI, ahc_hitJ,  ahc_hitK, ahc_hitEnergy, ahc_hitTime, ahc_nHits);
+      if (nT0 < nT0s) continue;
+
+      //Cut on number of hits
+      if(ahc_nHits < nMinHits) continue;
+      if(ahc_nHits > nMaxHits) continue;
+
+      for(int i = 0; i < ahc_nHits; i++)
+	{
+	  int layer = ahc_hitK[i];
+	  if(layer > nLayer) continue;
+
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
+	  nHits ++;
+	  float ampl = ahc_hitEnergy[i];
+
+	  if(MIP)
+	    {
+	      if(ampl > m_MIPcut)
+		{
+		  //total sum of energy
+		  SumE += ampl;
+		  //position sum energy weighted
+		  SumZE += ampl*ahc_hitPos[i][2];
+		}
+	    }
+	  else
+	    {
+	      if(ampl > m_MIPcut*EstimateMIP(layer))
+		{
+		  SumE += ampl;
+		  SumZE += ampl*ahc_hitPos[i][2];
+		}
+	    }
+	}
+
+      //Calculate COGz in one event
+      cogz = SumZE/SumE;
+
+      //Fill 2D histo
+      TIter next2(m_histo2DList);
+      TObject *obj;
+      while((obj = next2()))
+	{
+	  TH2F* pHisto = static_cast<TH2F*>(obj);
+	  pHisto->Fill(cogz, nHits);
+	  pHisto->GetXaxis()->SetTitle("Cog Z [mm]");
+	  pHisto->GetYaxis()->SetTitle("Number of Hits");
+	  pHisto->SetDrawOption("COLZ");
+	}
+    }
+
+  //Lock rootfile to write
+  mutex.lock();
+  pArchive->OpenTFile(m_ArchiveName, "UPDATE");
+  emit log("DEBUG", QString("Writing to Archive File : %1").arg(QString::fromStdString(m_ArchiveName)));
+
+  std::string m_dirName = "Run_";
+  m_dirName += m_runNumber;
+
+  pArchive->MakeRoot(m_dirName);
+  pArchive->mkdir("nHitscogZ");
+  pArchive->WriteElement(m_histo2DList);
+  pArchive->close();
+  mutex.unlock();
+
+  m_time = GetElapsedTime()/1000.;
+
+  emit log("DEBUG", QString("nHitscogZ check done : Treated %1 events in %2 secs").arg(QString::number(m_maxevents), QString::number(m_time)));
+
+  booker->deleteLater();
+  delete m_histo2DList;
+  delete tree;
+}
+
+//-----------------------------------------------------------------------------------------------
+
 
 /*
  * HitMap Module
