@@ -58,6 +58,7 @@
     <parameter name="OutputCollectionNameHCAL" type="String"> EUDAQDataHcal </parameter>
     <!-- Only propagate validated event -->
     <parameter name="onlyValidatedEvents" type="Bool"> true </parameter>
+    <!--parameter name="BIF_offset" type="Int"> 67685  </parameter-->
     <parameter name="BIF_offset" type="Int"> 67685  </parameter>
     
   </processor>
