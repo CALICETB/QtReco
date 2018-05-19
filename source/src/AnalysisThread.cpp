@@ -78,6 +78,7 @@ void AnalysisThread::run()
   Hits();
   Shower();
   EnergyLayer();
+  MemoryCells();
   HitMap();
   nHitscogZ();
   //Temperature();
@@ -1282,7 +1283,7 @@ void AnalysisThread::EnergyChannel()
  * Calculates the energy sum within one event and fill an histogram per layer
  */
 
-/*void AnalysisThread::EnergyCell()
+/* void AnalysisThread::EnergyCell()
 {
   emit log("MESSAGE", "Energy per Layer started");
 
@@ -1634,17 +1635,21 @@ void AnalysisThread::Hits()
 	    {
 	      //if(ampl_ahc > m_MIPcut/2)
 	      //nhitover25[layer-1]++;
-	      nHits++;
 	      if(ampl_ahc > m_MIPcut)
-		nhitover50[layer-1]++;
+		{
+		  nHits++;
+		  nhitover50[layer-1]++;
+		}
 	    }
 	  else
 	    {
 	      //if(ampl_ahc > m_MIPcut*EstimateMIP(layer)/2)
 	      //nhitover25[layer-1]++;
-	      nHits++;
 	      if(ampl_ahc > m_MIPcut*EstimateMIP(layer))
-		nhitover50[layer-1]++;
+		{
+		  nHits++;
+		  nhitover50[layer-1]++;
+		}
 	    }
 	}
 
@@ -2097,6 +2102,138 @@ void AnalysisThread::Shower()
 //-----------------------------------------------------------------------------------------------
 
 /*
+ * Memory Cells
+ * Creates a histogram of memory cell IDs of all hits
+ */
+
+void AnalysisThread::MemoryCells()
+{
+  emit log("MESSAGE", "Memory Cells started");
+
+  //start timer
+  timer.start();
+  int m_maxevents = 0;
+  double m_time = 0;
+
+  //Open rootfile
+  pAnalysis->OpenTFile(m_Rootfile, "READ");
+
+  if(!pAnalysis->isOpened())
+    {
+      emit log("ERROR", QString("Can't open TFile : %1").arg(QString::fromStdString(m_Rootfile)));
+      return;
+    }
+
+  //Declare TTree
+  TTree *tree = (TTree*)pAnalysis->GetTree("bigtree");
+
+  //Declare variables
+  //HBU
+  Int_t runNumber;
+  Int_t eventNumber;
+  int ahc_hitI[MAXCELL];
+  int ahc_hitJ[MAXCELL];
+  int ahc_hitK[MAXCELL];
+  Float_t ahc_hitEnergy[MAXCELL];
+  Float_t ahc_hitTime[MAXCELL];
+  int ahc_hitType[MAXCELL];
+  Int_t ahc_nHits;
+
+  //Enable/disable branches
+  tree->SetBranchStatus("*", 0);
+  tree->SetBranchStatus("runNumber", 1);
+  tree->SetBranchStatus("eventNumber", 1);
+  tree->SetBranchStatus("ahc_nHits", 1);
+  tree->SetBranchStatus("ahc_hitI", 1);
+  tree->SetBranchStatus("ahc_hitJ", 1);
+  tree->SetBranchStatus("ahc_hitK", 1);
+  tree->SetBranchStatus("ahc_hitEnergy", 1);
+  tree->SetBranchStatus("ahc_hitTime", 1);
+  tree->SetBranchStatus("ahc_hitType", 1);
+
+  //Declare branches
+  tree->SetBranchAddress("runNumber", &runNumber);
+  tree->SetBranchAddress("eventNumber", &eventNumber);
+  tree->SetBranchAddress("ahc_nHits", &ahc_nHits);
+  tree->SetBranchAddress("ahc_hitI", &ahc_hitI);
+  tree->SetBranchAddress("ahc_hitJ", &ahc_hitJ);
+  tree->SetBranchAddress("ahc_hitK", &ahc_hitK);
+  tree->SetBranchAddress("ahc_hitEnergy", &ahc_hitEnergy);
+  tree->SetBranchAddress("ahc_hitTime", &ahc_hitTime);
+  tree->SetBranchAddress("ahc_hitType", &ahc_hitType);
+
+  //Booking of histograms (TProfile per layer)
+  DMAHCALBooker *booker = new DMAHCALBooker("MemoryCells");
+
+  TH1F *memoryCellHisto = new TH1F("MemoryCells", "MemoryCells", 16, 1, 16);
+
+  //Create histo lists
+  TList *m_HistoList = new TList();
+  m_HistoList->Add(memoryCellHisto);
+  m_HistoList->SetName("MemoryCells List");
+
+  //Loop over roofile
+  for(int n = 0; n < tree->GetEntries(); n++)
+    {
+      tree->GetEntry(n);
+      m_maxevents = std::max(m_maxevents, eventNumber);
+
+      for(int i = 0; i < ahc_nHits; i++)
+	{
+      	  int memoryCellID = ahc_hitType[i]%100;
+
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
+
+	  if(ahc_hitK[i] > nLayer) continue;
+
+	  if(MIP)
+	    {
+	      if(ahc_hitEnergy[i] > m_MIPcut)
+		{
+		  memoryCellHisto->Fill(memoryCellID);
+		}
+	    }
+	  else
+	    {
+	      if(ahc_hitEnergy[i] > m_MIPcut*EstimateMIP(ahc_hitK[i]))
+		{
+		  memoryCellHisto->Fill(memoryCellID);
+		}
+	    }
+	}
+    }
+
+  memoryCellHisto->GetXaxis()->SetTitle("Memory Cell");
+  memoryCellHisto->GetYaxis()->SetTitle("Entries");
+
+  //Lock rootfile to write
+  mutex.lock();
+  pArchive->OpenTFile(m_ArchiveName, "UPDATE");
+  emit log("DEBUG", QString("Writing to Archive File : %1").arg(QString::fromStdString(m_ArchiveName)));
+
+  std::string m_dirName = "Run_";
+  m_dirName += m_runNumber;
+
+  pArchive->MakeRoot(m_dirName);;
+  pArchive->mkdir("MemoryCells");
+  pArchive->WriteElement(m_HistoList);
+  pArchive->close();
+  mutex.unlock();
+
+  m_time = GetElapsedTime()/1000.;
+
+  emit log("DEBUG", QString("MemoryCells check done : Treated %1 events in %2 secs").arg(QString::number(m_maxevents), QString::number(m_time)));
+  booker->deleteLater();
+  delete m_HistoList;
+  delete tree;
+}
+
+//-----------------------------------------------------------------------------------------------
+
+
+
+/*
  * Energy sum per layer
  * Creates a Profile of energy sum versus layer number
  */
@@ -2256,6 +2393,8 @@ void AnalysisThread::EnergyLayer()
 }
 
 //-----------------------------------------------------------------------------------------------
+
+
 
 
 /*

@@ -58,6 +58,8 @@ protected:
     void Shower();
     //EnergyPerLayer
     void EnergyLayer();
+    //MemoryCells
+    void MemoryCells();
     //HitMap analysis
     void HitMap();
     //nHitscogZ analysis
