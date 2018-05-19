@@ -929,7 +929,7 @@ void AnalysisThread::Esum()
 
   if(MIP)
     {
-      booker->Book1DHistograms("Energy_Sum", 3000, 0, 3000);
+      booker->Book1DHistograms("Energy_Sum", 4500, 0, 4500);
       booker->SetAxis("1D", "Energy [MIP]", "# Entries");
     }
   else
@@ -1587,7 +1587,7 @@ void AnalysisThread::Hits()
 
   //booker->BookProfile("NProf_0.25MIP", nLayer+1, -0.5, nLayer+0.5);
   booker->BookProfile("NProf_0.50MIP", nLayer+1, -0.5, nLayer+0.5);
-  TH1F *nHitsTotal = new TH1F("nHits_Per_Event","nHits_Per_Event", 500, 0, 500);
+  TH1F *nHitsTotal = new TH1F("nHits_Per_Event","nHits_Per_Event", 1500, 0, 1500);
   booker->Book1DHistograms("NHits_0.5MIP_Layer", nLayer, 50, -0.5, 50.5);
 
   //Create TProfile list

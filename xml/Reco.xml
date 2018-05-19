@@ -58,8 +58,8 @@
     <parameter name="OutputCollectionNameHCAL" type="String"> EUDAQDataHcal </parameter>
     <!-- Only propagate validated event -->
     <parameter name="onlyValidatedEvents" type="Bool"> true </parameter>
-    <!--parameter name="BIF_offset" type="Int"> 67685  </parameter-->
     <parameter name="BIF_offset" type="Int"> 67685  </parameter>
+    <!--parameter name="BIF_offset" type="Int"> 451685  </parameter-->
     
   </processor>
 
@@ -118,11 +118,13 @@
       E4DMipConstants                       /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_mip_constants_ahc2_001_20180419_100003.slcio		mip_constants
       E4DMipSlopes                          /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_mip_slopes_HEAD_20180419_100003.slcio			mip_slopes
       E4DDeadCellMap                        /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_DeadCellMap_HEAD_20180419_100003.slcio			DeadCellMap
-      E4DSaturationParameters               /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_SaturationParameters_HEAD_20180419_100004.slcio		SaturationParameters
+      E4DSaturationParameters               /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_SaturationParameters_HEAD_20180514_151212.slcio		SaturationParameters
       E4DIntercalibration                   /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_Intercalibration_HEAD_20180419_100004.slcio		Intercalibration
       E4DPhysicsCalibIntercalibration       /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_Physicscalibintercalibration_HEAD_20180419_100004.slcio	Physicscalibintercalibration
-      E4DTimeSlopes                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeSlope_HEAD_20180513_083017.slcio			TimeSlope
-      E4DTimeOffset                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeOffset_HEAD_20180513_083012.slcio			TimeOffset
+      E4DTimeSlopes                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeSlope_HEAD_20180517_214310.slcio			TimeSlope
+      E4DTimeOffset                         /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeOffset_HEAD_20180517_214243.slcio			TimeOffset
+      E4DTimeOffsetMem_Even                 /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeOffsetMem_Even_HEAD_20180517_214250.slcio		TimeOffsetMem_Even
+      E4DTimeOffsetMem_Odd                  /home/calice/Reconstruction/2018_May_CERN/dbfiles/condDB_TimeOffsetMem_Odd_HEAD_20180517_214256.slcio		TimeOffsetMem_Odd
 
  </parameter>
   </processor>
@@ -217,7 +219,7 @@
     <!--Do MIP temperature correction-->
     <parameter name="doMipTemperatureCorrection" type="bool"> false </parameter>
     <!--Do saturation correction-->
-    <parameter name="doSaturationCorrection" type="bool"> false </parameter>
+    <parameter name="doSaturationCorrection" type="bool"> true </parameter>
     <!--Filter dead cells-->
     <parameter name="filterDeadCells" type="bool"> false </parameter>
     <!--Filter cells that use some default value in calibration.-->

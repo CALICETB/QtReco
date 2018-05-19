@@ -30,12 +30,11 @@
     <!-- Aborber type Tungsten/Iron -->
     <parameter name="Absorber" value="Iron"/>
     <!-- Run Number -->
-    <parameter name="Run" value="060531"/>
+    <parameter name="Run" value="060790"/>
     <!-- Input File PATH -->
     <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
     <!--parameter name="Input_PATH" value="/pnfs/desy.de/calice/tb-desy/native/desyAhcal2018/February2018/slcioAhcalBif/"/-->
     <parameter name="Input_PATH" value="/media/sf_TB2018-data/slcio/"/>
-
     <!-- Output File PATH -->
     <parameter name="Output_PATH" value="/media/sf_hdd4/ReconstructedFiles"/>
     <!-- Pedestal substraction -->
