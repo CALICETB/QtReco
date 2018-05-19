@@ -77,6 +77,7 @@ void AnalysisThread::run()
   HitTime();
   Hits();
   Shower();
+  EnergyLayer();
   HitMap();
   nHitscogZ();
   //Temperature();
@@ -1497,7 +1498,7 @@ void AnalysisThread::EnergyChannel()
 
 /*
  * Number of Hits per Layer
- * Calculates the number of hits within one event over a certain threshold and fill an histogram per layer + TProfile over all layers
+ * Calculates the number of hits within one event over a certain threshold and fill an histogram per layer + TProfile and Histogram over all layers
  */
 
 void AnalysisThread::Hits()
@@ -1586,7 +1587,7 @@ void AnalysisThread::Hits()
 
   //booker->BookProfile("NProf_0.25MIP", nLayer+1, -0.5, nLayer+0.5);
   booker->BookProfile("NProf_0.50MIP", nLayer+1, -0.5, nLayer+0.5);
-
+  TH1F *nHitsTotal = new TH1F("nHits_Per_Event","nHits_Per_Event", 500, 0, 500);
   booker->Book1DHistograms("NHits_0.5MIP_Layer", nLayer, 50, -0.5, 50.5);
 
   //Create TProfile list
@@ -1594,13 +1595,18 @@ void AnalysisThread::Hits()
   m_profileList = booker->GetObjects("Profile");
   m_profileList->SetName("Profile NHits List");
 
-  //Create histo list
+  //Create histo lists
   TList *m_HistoList = new TList();
   m_HistoList = booker->GetObjects("1D");
   m_HistoList->SetName("Histo NHits List");
 
+  TList *m2_HistoList = new TList();
+  m2_HistoList->SetName("nHits_Per_Event List");
+  m2_HistoList->Add(nHitsTotal);
+
   //std::vector<int> nhitover25(nLayer);
   std::vector<int> nhitover50(nLayer);
+  int nHits;
 
   //Loop over roofile
   for(int n = 0; n < tree->GetEntries(); n++)
@@ -1611,7 +1617,7 @@ void AnalysisThread::Hits()
 	  //nhitover25[iLayer] = 0;
 	  nhitover50[iLayer] = 0;
 	}
-
+      nHits = 0;
       m_maxevents = std::max(m_maxevents, eventNumber);
 
       for(int i = 0; i < ahc_nHits; i++)
@@ -1628,6 +1634,7 @@ void AnalysisThread::Hits()
 	    {
 	      //if(ampl_ahc > m_MIPcut/2)
 	      //nhitover25[layer-1]++;
+	      nHits++;
 	      if(ampl_ahc > m_MIPcut)
 		nhitover50[layer-1]++;
 	    }
@@ -1635,6 +1642,7 @@ void AnalysisThread::Hits()
 	    {
 	      //if(ampl_ahc > m_MIPcut*EstimateMIP(layer)/2)
 	      //nhitover25[layer-1]++;
+	      nHits++;
 	      if(ampl_ahc > m_MIPcut*EstimateMIP(layer))
 		nhitover50[layer-1]++;
 	    }
@@ -1680,6 +1688,9 @@ void AnalysisThread::Hits()
 	  pHisto[index]->Fill(nhitover50[index]);
 	  index++;
 	}
+      nHitsTotal->GetXaxis()->SetTitle("Number of Hits per Event");
+      nHitsTotal->GetYaxis()->SetTitle("#Entries");
+      nHitsTotal->Fill(nHits);
 
       TIter next2(m_profileList);
       while ((obj = next2()))
@@ -1721,6 +1732,8 @@ void AnalysisThread::Hits()
   pArchive->GetRunDir()->cd();
   pArchive->mkdir("NHits_Layer");
   pArchive->WriteElement(m_HistoList);
+  pArchive->mkdir("nHits_Per_Event");
+  pArchive->WriteElement(m2_HistoList);
   pArchive->close();
   mutex.unlock();
 
@@ -1730,6 +1743,7 @@ void AnalysisThread::Hits()
   booker->deleteLater();
   delete m_HistoList;
   delete m_profileList;
+  delete m2_HistoList;
   delete tree;
 }
 
@@ -1838,8 +1852,6 @@ void AnalysisThread::Shower()
   if(m_absorber == "Iron")
     MoliereRadius = 1.71*10; //mm
 
-  //Energy Profile
-  booker->BookProfile("Profile_EnergyPerLayer", nLayer+1, -0.5, nLayer+1.5);
   //Center of gravity in X
   booker->Book1DHistograms("MeanX", 360, -360, 360);
   //Center of gravity in Y
@@ -1858,17 +1870,11 @@ void AnalysisThread::Shower()
   m_histo1DList = booker->GetObjects("1D");
   m_histo1DList->SetName("Mean pos List");
 
-  //Create list TProfile
-  TList *m_profileList = new TList();
-  m_profileList = booker->GetObjects("Profile");
-  m_profileList->SetName("Profile Energy List");
-
   //Create list 2D histo
   TList *m_histo2DList = new TList();
   m_histo2DList = booker->GetObjects("2D");
   m_histo2DList->SetName("Position comparison List");
 
-  std::vector<float> sumEnergy(nLayer);
   float cogx, cogy, cogz = 0;
   float SumE  = 0;
   float SumXE, SumYE, SumZE =0;
@@ -1883,10 +1889,6 @@ void AnalysisThread::Shower()
       SumE = 0;
       SumXE =0; SumYE = 0; SumZE = 0;
       SumRE = 0; MeanR = 0;
-      for(int iLayer = 0; iLayer < nLayer; iLayer++)
-	{
-	  sumEnergy[iLayer] = 0;
-	}
       m_maxevents = std::max(m_maxevents, eventNumber);
 
       //T0 criteria
@@ -1900,7 +1902,7 @@ void AnalysisThread::Shower()
       for(int i = 0; i < ahc_nHits; i++)
 	{
 	  int layer = ahc_hitK[i];
-	  if(ahc_hitK[i] > nLayer) continue;
+	  if(layer > nLayer) continue;
 
 	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
 	  //if (isT0channel) continue;
@@ -1910,8 +1912,6 @@ void AnalysisThread::Shower()
 	    {
 	      if(ampl > m_MIPcut)
 		{
-		  //sum energy per layer
-		  sumEnergy[layer-1] += ampl;
 		  //total sum of energy
 		  SumE += ampl;
 		  //position sum energy weighted
@@ -1924,7 +1924,6 @@ void AnalysisThread::Shower()
 	    {
 	      if(ampl > m_MIPcut*EstimateMIP(layer))
 		{
-		  sumEnergy[layer-1] += ampl;
 		  SumE += ampl;
 		  SumXE += ampl*ahc_hitPos[i][0];
 		  SumYE += ampl*ahc_hitPos[i][1];
@@ -2068,6 +2067,156 @@ void AnalysisThread::Shower()
 	  pHisto->GetYaxis()->SetTitle("Cog Y [mm]");
 	  pHisto->SetDrawOption("COLZ");
 	}
+    }
+
+  //Lock rootfile to write
+  mutex.lock();
+  pArchive->OpenTFile(m_ArchiveName, "UPDATE");
+  emit log("DEBUG", QString("Writing to Archive File : %1").arg(QString::fromStdString(m_ArchiveName)));
+
+  std::string m_dirName = "Run_";
+  m_dirName += m_runNumber;
+
+  pArchive->MakeRoot(m_dirName);
+  pArchive->mkdir("Shower");
+  pArchive->WriteElement(m_histo1DList);
+  pArchive->WriteElement(m_histo2DList);
+  pArchive->close();
+  mutex.unlock();
+
+  m_time = GetElapsedTime()/1000.;
+
+  emit log("DEBUG", QString("Shower check done : Treated %1 events in %2 secs").arg(QString::number(m_maxevents), QString::number(m_time)));
+
+  booker->deleteLater();
+  delete m_histo1DList;
+  delete m_histo2DList;
+  delete tree;
+}
+
+//-----------------------------------------------------------------------------------------------
+
+/*
+ * Energy sum per layer
+ * Creates a Profile of energy sum versus layer number
+ */
+
+void AnalysisThread::EnergyLayer()
+{
+  emit log("MESSAGE", "EnergyLayer started");
+
+  //start timer
+  timer.start();
+  int m_maxevents = 0;
+  double m_time = 0;
+
+  //Open roofile
+  pAnalysis->OpenTFile(m_Rootfile, "READ");
+
+  if(!pAnalysis->isOpened())
+    {
+      emit log("ERROR", QString("Can't open TFile : %1").arg(QString::fromStdString(m_Rootfile)));
+      return;
+    }
+
+
+  //Declare TTree
+  TTree *tree = (TTree*)pAnalysis->GetTree("bigtree");
+
+  //Declare variables
+  //HBU
+  Int_t runNumber;
+  Int_t eventNumber;
+  int ahc_hitI[MAXCELL];
+  int ahc_hitJ[MAXCELL];
+  int ahc_hitK[MAXCELL];
+  Float_t ahc_hitPos[MAXCELL][3];
+  Float_t ahc_hitEnergy[MAXCELL];
+  Float_t ahc_hitTime[MAXCELL];
+  Int_t ahc_nHits;
+
+  //Enable/disable branches
+  tree->SetBranchStatus("*", 0);
+  tree->SetBranchStatus("runNumber", 1);
+  tree->SetBranchStatus("eventNumber", 1);
+  tree->SetBranchStatus("ahc_nHits", 1);
+  tree->SetBranchStatus("ahc_hitI", 1);
+  tree->SetBranchStatus("ahc_hitJ", 1);
+  tree->SetBranchStatus("ahc_hitK", 1);
+  tree->SetBranchStatus("ahc_hitEnergy", 1);
+  tree->SetBranchStatus("ahc_hitTime", 1);
+  tree->SetBranchStatus("ahc_hitPos", 1);
+
+
+  //Declare branches
+  tree->SetBranchAddress("runNumber", &runNumber);
+  tree->SetBranchAddress("eventNumber", &eventNumber);
+  tree->SetBranchAddress("ahc_nHits", &ahc_nHits);
+  tree->SetBranchAddress("ahc_hitI", &ahc_hitI);
+  tree->SetBranchAddress("ahc_hitJ", &ahc_hitJ);
+  tree->SetBranchAddress("ahc_hitK", &ahc_hitK);
+  tree->SetBranchAddress("ahc_hitEnergy", &ahc_hitEnergy);
+  tree->SetBranchAddress("ahc_hitTime", &ahc_hitTime);
+  tree->SetBranchAddress("ahc_hitPos", &ahc_hitPos);
+
+  //Booking of histograms
+  DMAHCALBooker *booker = new DMAHCALBooker("EnergyLayer");
+
+  //Energy Profile
+  booker->BookProfile("Profile_EnergyPerLayer", nLayer+1, -0.5, nLayer+1.5);
+
+  //Create list TProfile
+  TList *m_profileList = new TList();
+  m_profileList = booker->GetObjects("Profile");
+  m_profileList->SetName("EnergyLayer List");
+
+  std::vector<float> sumEnergy(nLayer);
+
+  //Loop over roofile
+  for(int n = 0; n < tree->GetEntries(); n++)
+    {
+      tree->GetEntry(n);
+      for(int iLayer = 0; iLayer < nLayer; iLayer++)
+	{
+	  sumEnergy[iLayer] = 0;
+	}
+      m_maxevents = std::max(m_maxevents, eventNumber);
+
+      //T0 criteria
+      int nT0 = NumberOfT0(ahc_hitI, ahc_hitJ,  ahc_hitK, ahc_hitEnergy, ahc_hitTime, ahc_nHits);
+      if (nT0 < nT0s) continue;
+
+      //Cut on number of hits
+      if(ahc_nHits < nMinHits) continue;
+      if(ahc_nHits > nMaxHits) continue;
+
+      for(int i = 0; i < ahc_nHits; i++)
+	{
+	  int layer = ahc_hitK[i];
+	  if(layer > nLayer) continue;
+
+	  //bool isT0channel = isT0(ahc_hitI[i], ahc_hitJ[i], ahc_hitK[i]);
+	  //if (isT0channel) continue;
+	  float ampl = ahc_hitEnergy[i];
+
+	  if(MIP)
+	    {
+	      if(ampl > m_MIPcut)
+		{
+		  //sum energy per layer
+		  sumEnergy[layer-1] += ampl;
+		}
+	    }
+	  else
+	    {
+	      if(ampl > m_MIPcut*EstimateMIP(layer))
+		{
+		  sumEnergy[layer-1] += ampl;
+		}
+	    }
+	}
+
+      TObject *obj;
 
       //Fill TProfile
       TIter next3(m_profileList);
@@ -2092,25 +2241,22 @@ void AnalysisThread::Shower()
   m_dirName += m_runNumber;
 
   pArchive->MakeRoot(m_dirName);
-  pArchive->mkdir("Shower");
-  pArchive->WriteElement(m_histo1DList);
-  pArchive->WriteElement(m_histo2DList);
+  pArchive->mkdir("EnergyLayer");
   pArchive->WriteElement(m_profileList);
   pArchive->close();
   mutex.unlock();
 
   m_time = GetElapsedTime()/1000.;
 
-  emit log("DEBUG", QString("Shower check done : Treated %1 events in %2 secs").arg(QString::number(m_maxevents), QString::number(m_time)));
+  emit log("DEBUG", QString("EnergyLayer check done : Treated %1 events in %2 secs").arg(QString::number(m_maxevents), QString::number(m_time)));
 
   booker->deleteLater();
-  delete m_histo1DList;
-  delete m_histo2DList;
   delete m_profileList;
   delete tree;
 }
 
 //-----------------------------------------------------------------------------------------------
+
 
 /*
  * nHits vs. cogZ Module

@@ -56,6 +56,8 @@ protected:
     void Hits();
     //Shower analysis
     void Shower();
+    //EnergyPerLayer
+    void EnergyLayer();
     //HitMap analysis
     void HitMap();
     //nHitscogZ analysis
