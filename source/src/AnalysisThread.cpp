@@ -2165,7 +2165,7 @@ void AnalysisThread::MemoryCells()
   //Booking of histograms (TProfile per layer)
   DMAHCALBooker *booker = new DMAHCALBooker("MemoryCells");
 
-  TH1F *memoryCellHisto = new TH1F("MemoryCells", "MemoryCells", 16, 1, 16);
+  TH1F *memoryCellHisto = new TH1F("MemoryCells", "MemoryCells", 16, 0, 16);
 
   //Create histo lists
   TList *m_HistoList = new TList();

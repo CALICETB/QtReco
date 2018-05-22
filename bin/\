@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Steering File for DMAHCAL -->
+
+<DMAHCAL>
+
+  <Settings>
+    <!-- Analysis Mode -->
+    <parameter name="Analysis_Only" value="false"/>
+  </Settings>
+
+  <!-- Mapping file -->
+  <Mapping>
+    <parameter name="Filename" value="/home/calice/Reconstruction/2018_May_CERN/MapChipChan2IJK_May2018.txt"/>
+  </Mapping>
+
+  <T0s>
+    <!-- Number of T0s/Cherenkov -->
+    <parameter name="nT0s" value="6"/>
+    <!--Layer Chip Channel -->
+    <parameter name="T0_1" value="1 169 29"/>
+    <parameter name="T0_2" value="1 177 23"/>
+    <parameter name="T0_3" value="3 201 29"/>
+    <parameter name="T0_4" value="3 211 6"/>
+    <parameter name="T0_5" value="4 217 23"/>
+    <parameter name="T0_6" value="4 227 6"/>
+  </T0s>
+
+  <Steering> 
+    <!-- Aborber type Tungsten/Iron -->
+    <parameter name="Absorber" value="Iron"/>
+    <!-- Run Number -->
+    <parameter name="Run" value="MyRunNumber"/>
+    <!-- Input File PATH -->
+    <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
+    <!--parameter name="Input_PATH" value="/pnfs/desy.de/calice/tb-desy/native/desyAhcal2018/February2018/slcioAhcalBif/"/-->
+	<parameter name="Input_PATH" value="/media/sf_TB2018-data/slcio/Electron/-50GeV/PP"/>
+
+    <!-- Output File PATH -->
+    <parameter name="Output_PATH" value="/media/sf_hdd4/ReconstructedFiles"/>
+    <!-- Pedestal substraction -->
+    <parameter name="Pedestal" value="true"/>
+    <!-- ADC to MIP Conversion -->
+    <parameter name="ADCtoMIP" value="true"/>
+  </Steering>
+
+  <Storage>
+    <parameter name="File" value="/tmp/Archive_Monitor.root"/>
+  </Storage>
+
+  <Analysis>
+    <!-- if EBU present -->
+    <parameter name="With_EBU" value="false"/>
+    <!-- MIP Cut value -->
+    <parameter name="MIP_Cut" value="0.5"/>
+    <!-- Nlayers -->
+    <parameter name="NLayer" value="40"/>
+    <!-- nT0s for Analysis -->
+    <parameter name="nT0s" value="0"/>
+    <!-- Cut on Min Number of Hits in Event -->
+    <parameter name="NMinHits" value="0"/>
+    <!-- Cut on Max Number of Hits in Event -->
+    <parameter name="NMaxHits" value="100000"/>
+    
+  </Analysis>
+
+</DMAHCAL>

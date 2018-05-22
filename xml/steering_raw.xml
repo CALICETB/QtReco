@@ -34,7 +34,8 @@
     <!-- Input File PATH -->
     <!--parameter name="Input_PATH" value="/home/calice/Desktop/DAQ_PC/temp/"/-->
     <!--parameter name="Input_PATH" value="/pnfs/desy.de/calice/tb-desy/native/desyAhcal2018/February2018/slcioAhcalBif/"/-->
-    <parameter name="Input_PATH" value="/media/sf_TB2018-data/slcio/"/>
+    <!--parameter name="Input_PATH" value="/media/sf_TB2018-data/slcio/Muon/40GeV/"/-->
+    <parameter name="Input_PATH" value="IFP/"/>
     <!-- Output File PATH -->
     <parameter name="Output_PATH" value="/media/sf_hdd4/ReconstructedFiles"/>
     <!-- Pedestal substraction -->

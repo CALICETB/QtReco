@@ -250,7 +250,7 @@ void DMAHCALMainWindow::Find_Run()
    }
 
 
-  QString fileName = "/home/calice/Software/QtReco_devel/QtReco/scripts/findRun.sh";
+  QString fileName = "../scripts/findRun.sh";
   
   QProcess *process = new QProcess;
   //process->start("../scripts/findRun.sh", QStringList() << arg << myrun << minHits);

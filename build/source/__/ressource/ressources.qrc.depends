@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="ressource/">
+        <file>images/calice_logo.jpg</file>
+        <file>images/desy.gif</file>
+    </qresource>
+</RCC>
