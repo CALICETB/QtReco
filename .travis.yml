@@ -16,17 +16,14 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install cvmfs cvmfs-config-default
   - rm -f cvmfs-release-latest_all.deb
+  - wget https://lcd-data.web.cern.ch/lcd-data/CernVM/default.local
   - sudo mkdir -p /etc/cvmfs
-  - touch default.local
-  - echo "CVMFS_REPOSITORIES='ilc.desy.de'" >> default.local
-  - echo "CVMFS_HTTP_PROXY=DIRECT" >> default.local
   - sudo mv default.local /etc/cvmfs/default.local
-  - sudo cvmfs_config setup
-  - sudo cvmfs_config probe
   - sudo /etc/init.d/autofs stop
-  - sudo mkdir -p /cvmfs/ilc.desy.de
-  - sudo mount -t cvmfs ilc.desy.de /cvmfs/ilc.desy.de
-  - ls /cvmfs/ilc.desy.de
+  - sudo cvmfs_config setup
+  - sudo mkdir -p /cvmfs/clicdp.cern.ch
+  - sudo mount -t cvmfs clicdp.cern.ch /cvmfs/clicdp.cern.ch
+  - ls /cvmfs/clicdp.cern.ch
 
 # command to install dependencies
 install:
@@ -35,5 +32,5 @@ install:
 
 # command to run tests
 script:
-  - docker run -it --name CI_container -v $PKGDIR:/Package -e COMPILER=gcc -v /cvmfs/ilc.desy.de:/cvmfs/ilc.desy.de -d clicdp/slc6-build /bin/bash
+  - docker run -it --name CI_container -v $PKGDIR:/Package -e COMPILER=gcc -v /cvmfs/clicdp.cern.ch:/cvmfs/clicdp.cern.ch -d clicdp/slc6-build /bin/bash
   - docker exec -it CI_container /bin/bash -c "./Package/.travis-ci.d/build.sh";
