@@ -17,6 +17,7 @@ before_install:
   - sudo apt-get install cvmfs cvmfs-config-default
   - rm -f cvmfs-release-latest_all.deb
   - sudo mkdir -p /etc/cvmfs
+  - sudo touch /etc/cvmfs/default.local
   - sudo echo "CVMFS_QUOTA_LIMIT='32140'" >> /etc/cvmfs/default.local
   - sudo echo "CVMFS_HTTP_PROXY=DIRECT" >> /etc/cvmfs/default.local
   - sudo echo "CVMFS_CACHE_BASE='/var/lib/cvmfs'" >> /etc/cvmfs/default.local
