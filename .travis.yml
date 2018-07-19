@@ -18,14 +18,11 @@ before_install:
   - rm -f cvmfs-release-latest_all.deb
   - sudo mkdir -p /etc/cvmfs
   - touch default.local
-  - echo "CVMFS_QUOTA_LIMIT='32140'" >> default.local
-  - echo "CVMFS_HTTP_PROXY=DIRECT" >> default.local
-  - echo "CVMFS_CACHE_BASE='/var/lib/cvmfs'" >> default.local
-  - echo "CVMFS_FORCE_SIGNING='yes'" >> default.local
   - echo "CVMFS_REPOSITORIES='ilc.desy.de'" >> default.local
-  - echo "CVMFS_SEND_INFO_HEADER=no" >> default.local
+  - echo "CVMFS_HTTP_PROXY=DIRECT" >> default.local
   - sudo mv default.local /etc/cvmfs/default.local
-  - sudo /etc/init.d/autofs stop
+  - sudo cvmfs_config probe
+  - sudo /etc/init.d/autofs restart
   - sudo cvmfs_config setup
   - sudo mkdir -p /cvmfs/ilc.desy.de
   - sudo mount -t cvmfs ilc.desy.de /cvmfs/ilc.desy.de
