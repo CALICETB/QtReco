@@ -27,8 +27,8 @@ before_install:
 
 # command to install dependencies
 install:
-  - mkdir Package
-  - export PKGDIR=${PWD}/Package
+  - echo ${PWD}
+  - export PKGDIR=${PWD}
 
 # command to run tests
 script:
