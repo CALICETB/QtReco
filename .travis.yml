@@ -18,14 +18,16 @@ before_install:
   - rm -f cvmfs-release-latest_all.deb
   - sudo mkdir -p /etc/cvmfs
   - sudo mkdir -p /etc/cvmfs/domain.d
-  - sudo mkdir -p /etc/cvmfs/keys/
+  - sudo mkdir -p /etc/cvmfs/keys/desy.de
   - touch default.local
-  - echo "CVMFS_QUOTA_LIMIT='32140'" >> default.local
-  - echo "CVMFS_HTTP_PROXY="http://ca-proxy.cern.ch:3128"" >> default.local
-  - echo "CVMFS_CACHE_BASE='/var/lib/cvmfs'" >> default.local
-  - echo "CVMFS_FORCE_SIGNING='yes'" >> default.local
-  - echo "CVMFS_REPOSITORIES='ilc.desy.de'" >> default.local
-  - echo "CVMFS_SEND_INFO_HEADER=no" >> default.local
+  - echo "CVMFS_REPOSITORIES=ilc.desy.de" >> default.local
+  - echo "CVMFS_CACHE_BASE=/var/cache/cvmfs2" >> default.local
+  - echo "CVMFS_QUOTA_LIMIT=24900" >> default.local
+  - echo "CVMFS_HTTP_PROXY="http://batch-squid.desy.de:3128;DIRECT"" >> default.local
+  - echo "CVMFS_SERVER_URL="http://grid-cvmfs-one.desy.de/cvmfs/@fqrn@;http://cvmfs-stratum-one.cern.ch/opt/@org@;http://cernvmfs.gridpp.rl.ac.uk/opt/@org@;http://cvmfs.racf.bnl.gov/opt/@org@;http://cvmfs.fnal.gov/opt/@org@;http://cvmfs-stratum-one.hep.pnnl.gov/cvmfs/@fqrn@"" >> default.local
+  - echo "CVMFS_NFS_SOURCE=no" >> default.local
+  - echo "CVMFS_MEMCACHE_SIZE=64" >> default.local
+  - echo "CVMFS_NFILES=65535" >> default.local
   - touch desy.de.conf
   - echo "CVMFS_SERVER_URL="http://grid-cvmfs-one.desy.de:8000/cvmfs/@fqrn@"" >> desy.de.conf
   - echo "CVMFS_KEYS_DIR=/etc/cvmfs/keys/desy.de" >> desy.de.conf
@@ -33,7 +35,7 @@ before_install:
   - sudo mv default.local /etc/cvmfs/
   - sudo mv desy.de.conf  /etc/cvmfs/domain.d/desy.de.conf
   - wget http://grid.desy.de/etc/cvmfs/keys/desy.de.pub
-  - sudo mv desy.de.pub /etc/cvmfs/keys/desy.de
+  - sudo mv desy.de.pub /etc/cvmfs/keys/desy.de/desy.de.pub
   - sudo /etc/init.d/autofs stop
   - sudo cvmfs_config setup
   - sudo mkdir -p /cvmfs/ilc.desy.de
