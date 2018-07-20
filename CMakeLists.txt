@@ -41,19 +41,13 @@ LIST( APPEND ROOT_COMPONENT_LIST Core Hist Rint HistPainter Graf Graf3d MathCore
 FIND_PACKAGE( ROOT COMPONENTS ${ROOT_COMPONENT_LIST} REQUIRED )
 
 ################################################################
-# GLUT                                                         #
-################################################################
-
-FIND_PACKAGE(GLUT REQUIRED)
-
-################################################################
 # Boost                                                        #
 ################################################################
 
 FIND_PACKAGE ( Boost 1.36.0 REQUIRED )
 
 # ----- Include package properties -----
-FOREACH( pkg ROOT GLUT Boost)
+FOREACH( pkg ROOT Boost)
 
   INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
   LINK_LIBRARIES( ${${pkg}_LIBRARIES} )

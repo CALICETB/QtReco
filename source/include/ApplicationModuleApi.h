@@ -17,7 +17,6 @@
 #include "XmlParser.h"
 #include "AnalysisModule.h"
 #include "Logger.h"
-#include "EventDisplayWindow.h"
 
 typedef std::map<QString, QString> ParameterMap;
 
@@ -67,8 +66,6 @@ public slots:
     void DoUpdate();
     //Slot function calling AnalysisModule
     void DoAnalysis();
-    //Slot function to open EventDisplay
-    void OpenDEH();
     //Slot function to redirect messages to Logger
     void RedirectMessage(QString type, QString message);
 
@@ -85,8 +82,6 @@ private:
     XmlParser *m_parser;
     //Logger Class Pointer
     Logger m_logger;
-    //EventDisplay Class Pointer
-    EventDisplayWindow *m_event;
 
     //Class variables
     bool running, isConfigured, stop, test;

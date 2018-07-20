@@ -1,0 +1,8 @@
+CVMFS_REPOSITORIES=ilc.desy.de,sft.cern.ch
+CVMFS_CACHE_BASE=/var/cache/cvmfs2
+CVMFS_QUOTA_LIMIT=24900
+CVMFS_HTTP_PROXY="http://batch-squid.desy.de:3128;DIRECT"
+CVMFS_SERVER_URL="http://grid-cvmfs-one.desy.de/cvmfs/@fqrn@;http://cvmfs-stratum-one.cern.ch/opt/@org@;http://cernvmfs.gridpp.rl.ac.uk/opt/@org@;http://cvmfs.racf.bnl.gov/opt/@org@;http://cvmfs.fnal.gov/opt/@org@;http://cvmfs-stratum-one.hep.pnnl.gov/cvmfs/@fqrn@"
+CVMFS_NFS_SOURCE=no
+CVMFS_MEMCACHE_SIZE=64
+CVMFS_NFILES=65535
