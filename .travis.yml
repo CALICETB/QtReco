@@ -30,9 +30,9 @@ before_install:
   - wget http://desy.de/~ebrianne/keys/cern-it4.cern.ch.pub
   - wget http://desy.de/~ebrianne/keys/cern-it5.cern.ch.pub
   - sudo mv cern.ch.pub /etc/cvmfs/keys/cern.ch/cern.ch.pub
-  - sudo mv cern.ch.pub /etc/cvmfs/keys/cern.ch/cern-it1.cern.ch.pub
-  - sudo mv cern.ch.pub /etc/cvmfs/keys/cern.ch/cern-it4.cern.ch.pub
-  - sudo mv cern.ch.pub /etc/cvmfs/keys/cern.ch/cern-it5.cern.ch.pub
+  - sudo mv cern-it1.cern.ch.pub /etc/cvmfs/keys/cern.ch/cern-it1.cern.ch.pub
+  - sudo mv cern-it4.cern.ch.pub /etc/cvmfs/keys/cern.ch/cern-it4.cern.ch.pub
+  - sudo mv cern-it5.cern.ch.pub /etc/cvmfs/keys/cern.ch/cern-it5.cern.ch.pub
   - sudo /etc/init.d/autofs stop
   - sudo cvmfs_config setup
   - sudo mkdir -p /cvmfs/ilc.desy.de
