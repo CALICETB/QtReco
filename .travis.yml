@@ -49,5 +49,5 @@ install:
 
 # command to run tests
 script:
-  - docker run -it --name CI_container -v $PKGDIR:/Package -e COMPILER=gcc -v /cvmfs/ilc.desy.de:/cvmfs/ilc.desy.de -v /cvmfs/sft.cern.ch:/cvmfs/sft.cern.ch -d cern/slc6-base /bin/bash
+  - docker run -it --name CI_container -v $PKGDIR:/Package -v /cvmfs/ilc.desy.de:/cvmfs/ilc.desy.de -v /cvmfs/sft.cern.ch:/cvmfs/sft.cern.ch -d cern/slc6-base /bin/bash
   - docker exec -it CI_container /bin/bash -c "./Package/.travis-ci.d/build.sh";
