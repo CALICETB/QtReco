@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export ILCSOFT=/cvmfs/clicdp.cern.ch/iLCSoft/builds/2016-11-22/x86_64-slc6-gcc48-opt
+ILCSOFT=/cvmfs/clicdp.cern.ch/iLCSoft/builds/2016-11-22/x86_64-slc6-gcc48-opt
 source $ILCSOFT/init_ilcsoft.sh
 
 cd /Package
