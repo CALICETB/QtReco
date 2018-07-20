@@ -9,8 +9,6 @@ int main(int argc, char *argv[])
 {
   //start QApplication
   QApplication a(argc, argv);
-  //ini glut for EventDisplay
-  glutInit(&argc, argv);
 
   //Splash screen (change version here)
   DMAHCAL::SplashScreen("1.3");
@@ -22,4 +20,3 @@ int main(int argc, char *argv[])
 
   return a.exec();
 }
-

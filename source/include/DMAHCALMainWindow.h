@@ -47,8 +47,6 @@ public slots:
     void UpdateButtons();
     //Update UI Parameters
     void UpdateGUI(ParameterMap map);
-    //Open EventDisplay Window
-    void Open_EventDisplay();
     //Action to configure run
     void Configure();
     //Quit

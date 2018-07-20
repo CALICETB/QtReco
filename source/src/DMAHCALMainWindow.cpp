@@ -35,7 +35,6 @@ DMAHCALMainWindow::DMAHCALMainWindow(QWidget *parent) :
     connect(ui->Steering, SIGNAL(clicked()), this, SLOT(Configure()));
     connect(ui->Start, SIGNAL(clicked()), m_dispatcher, SLOT(Start()));
     connect(ui->Stop, SIGNAL(clicked()), m_dispatcher, SLOT(Stop()));
-    connect(ui->Event_Display, SIGNAL(clicked()), this, SLOT(Open_EventDisplay()));
 
     //Update UI timer
     timer = new QTimer(this);
@@ -187,12 +186,4 @@ void DMAHCALMainWindow::UpdateGUI(ParameterMap map)
             ui->nT0s_value->setText(it->second);
 
     }
-}
-
-//------------------------------------------------------------------------------------
-
-void DMAHCALMainWindow::Open_EventDisplay()
-{
-    emit log("DEBUG", "Event Display not yet available!");
-    m_dispatcher->OpenDEH();
 }

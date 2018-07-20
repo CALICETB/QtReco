@@ -10,18 +10,16 @@ SET ( INC_FILES
        include/DMAHCALBooker.h
        include/DMAHCALMainWindow.h
        include/DMAHCALStorage.h
-       include/EventDisplayWindow.h
-       include/glced.h
        include/Logger.h
        include/MarlinModule.h
        include/RequestHandler.h
        include/SedModule.h
        include/ServerModule.h
        include/XmlParser.h )
-       
+
 file(GLOB GLOB_UI
         ${PROJECT_SOURCE_DIR}/ui/*.ui )
-        
+
 file(GLOB GLOB_QRC
         ${PROJECT_SOURCE_DIR}/ressource/*.qrc )
 

@@ -636,11 +636,6 @@
       </property>
      </widget>
     </widget>
-    <widget class="QPushButton" name="Event_Display">
-     <property name="text">
-      <string>Event Display</string>
-     </property>
-    </widget>
    </widget>
    <widget class="QLabel" name="calice_logo">
     <property name="geometry">
