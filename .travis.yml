@@ -16,14 +16,29 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install cvmfs cvmfs-config-default
   - rm -f cvmfs-release-latest_all.deb
-  - wget https://lcd-data.web.cern.ch/lcd-data/CernVM/default.local
   - sudo mkdir -p /etc/cvmfs
-  - sudo mv default.local /etc/cvmfs/default.local
+  - sudo mkdir -p /etc/cvmfs/domain.d
+  - sudo mkdir -p /etc/cvmfs/keys/
+  - touch default.local
+  - echo "CVMFS_QUOTA_LIMIT='32140'" >> default.local
+  - echo "CVMFS_HTTP_PROXY="http://ca-proxy.cern.ch:3128"" >> default.local
+  - echo "CVMFS_CACHE_BASE='/var/lib/cvmfs'" >> default.local
+  - echo "CVMFS_FORCE_SIGNING='yes'" >> default.local
+  - echo "CVMFS_REPOSITORIES='ilc.desy.de'" >> default.local
+  - echo "CVMFS_SEND_INFO_HEADER=no" >> default.local
+  - touch desy.de.conf
+  - echo "CVMFS_SERVER_URL="http://grid-cvmfs-one.desy.de:8000/cvmfs/@fqrn@"" >> desy.de.conf
+  - echo "CVMFS_KEYS_DIR=/etc/cvmfs/keys/desy.de" >> desy.de.conf
+  - echo "CVMFS_USE_GEOAPI=no" >> desy.de.conf
+  - sudo mv default.local /etc/cvmfs/
+  - sudo mv desy.de.conf  /etc/cvmfs/domain.d/desy.de.conf
+  - wget http://grid.desy.de/etc/cvmfs/keys/desy.de.pub
+  - sudo mv desy.de.pub /etc/cvmfs/keys/desy.de
   - sudo /etc/init.d/autofs stop
   - sudo cvmfs_config setup
-  - sudo mkdir -p /cvmfs/clicdp.cern.ch
-  - sudo mount -t cvmfs clicdp.cern.ch /cvmfs/clicdp.cern.ch
-  - ls /cvmfs/clicdp.cern.ch
+  - sudo mkdir -p /cvmfs/ilc.desy.de
+  - sudo mount -t cvmfs ilc.desy.de /cvmfs/ilc.desy.de
+  - ls /cvmfs/ilc.desy.de
 
 # command to install dependencies
 install:
@@ -32,6 +47,5 @@ install:
 
 # command to run tests
 script:
-  - docker run -it --name CI_container -v $PKGDIR:/Package -e COMPILER=gcc -v /cvmfs/clicdp.cern.ch:/cvmfs/clicdp.cern.ch -d clicdp/slc6-build /bin/bash
+  - docker run -it --name CI_container -v $PKGDIR:/Package -e COMPILER=gcc -v /cvmfs/ilc.desy.de:/cvmfs/ilc.desy.de -d clicdp/slc6-build /bin/bash
   - docker exec -it CI_container /bin/bash -c "./Package/.travis-ci.d/build.sh";
-
