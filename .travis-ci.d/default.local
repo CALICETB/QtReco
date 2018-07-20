@@ -1,4 +1,4 @@
-CVMFS_REPOSITORIES=ilc.desy.de
+CVMFS_REPOSITORIES=ilc.desy.de,sft.cern.ch
 CVMFS_CACHE_BASE=/var/cache/cvmfs2
 CVMFS_QUOTA_LIMIT=24900
 CVMFS_HTTP_PROXY="http://batch-squid.desy.de:3128;DIRECT"
