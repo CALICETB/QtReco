@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ILCSOFT=/cvmfs/ilc.desy.de/sw/x86_64_gcc48_sl6/v01-17-11
+source /cvmfs/ilc.desy.de/sw/x86_64_gcc48_sl6/init_gcc48.sh
 source $ILCSOFT/init_ilcsoft.sh
 
 cd /Package
