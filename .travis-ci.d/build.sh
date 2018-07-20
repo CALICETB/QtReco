@@ -1,5 +1,6 @@
 #!/bin/bash
 
+yum install -y qt4-devel
 ILCSOFT=/cvmfs/clicdp.cern.ch/iLCSoft/builds/current/CI_gcc
 source $ILCSOFT/init_ilcsoft.sh
 
