@@ -19,21 +19,8 @@ before_install:
   - sudo mkdir -p /etc/cvmfs
   - sudo mkdir -p /etc/cvmfs/domain.d
   - sudo mkdir -p /etc/cvmfs/keys/desy.de
-  - touch default.local
-  - echo "CVMFS_REPOSITORIES=ilc.desy.de" >> default.local
-  - echo "CVMFS_CACHE_BASE=/var/cache/cvmfs2" >> default.local
-  - echo "CVMFS_QUOTA_LIMIT=24900" >> default.local
-  - echo "CVMFS_HTTP_PROXY="http://batch-squid.desy.de:3128;DIRECT"" >> default.local
-  - echo "CVMFS_SERVER_URL="http://grid-cvmfs-one.desy.de/cvmfs/@fqrn@;http://cvmfs-stratum-one.cern.ch/opt/@org@;http://cernvmfs.gridpp.rl.ac.uk/opt/@org@;http://cvmfs.racf.bnl.gov/opt/@org@;http://cvmfs.fnal.gov/opt/@org@;http://cvmfs-stratum-one.hep.pnnl.gov/cvmfs/@fqrn@"" >> default.local
-  - echo "CVMFS_NFS_SOURCE=no" >> default.local
-  - echo "CVMFS_MEMCACHE_SIZE=64" >> default.local
-  - echo "CVMFS_NFILES=65535" >> default.local
-  - touch desy.de.conf
-  - echo "CVMFS_SERVER_URL="http://grid-cvmfs-one.desy.de:8000/cvmfs/@fqrn@"" >> desy.de.conf
-  - echo "CVMFS_KEYS_DIR=/etc/cvmfs/keys/desy.de" >> desy.de.conf
-  - echo "CVMFS_USE_GEOAPI=no" >> desy.de.conf
-  - sudo mv default.local /etc/cvmfs/
-  - sudo mv desy.de.conf  /etc/cvmfs/domain.d/desy.de.conf
+  - sudo cp ${PWD}/.travis-ci.d/default.local /etc/cvmfs/default.local
+  - sudo cp ${PWD}/.travis-ci.d/desy.de.conf  /etc/cvmfs/domain.d/desy.de.conf
   - wget http://grid.desy.de/etc/cvmfs/keys/desy.de.pub
   - sudo mv desy.de.pub /etc/cvmfs/keys/desy.de/desy.de.pub
   - sudo /etc/init.d/autofs stop
